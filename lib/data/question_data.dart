@@ -365,7 +365,7 @@ List<QuestionModel> questionList = [
     ],
   ),
   QuestionModel(
-    category: '꿀잼질문',
+    category: '연애',
     categoryCode: '06',
     questions: [
       Question(text: "애인과 2년 멀리 떨어질 일이 발생했다. 헤어져? 기다려?", questionNo: 1),

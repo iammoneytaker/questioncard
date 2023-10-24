@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../data/question_data.dart';
 import '../models/question.dart';
+import '../utils/debounce.dart';
 
 class QuestionScreen extends StatefulWidget {
   final String categoryCode;
@@ -29,7 +31,9 @@ class _QuestionScreenState extends State<QuestionScreen> {
       SwiperController(); // Swiper 컨트롤러 추가
   // 카드들에 대한 상태값
 
-  Timer? _debounce;
+  final _saveDebouncer = Debouncer(delay: const Duration(milliseconds: 300));
+  final _loadMoreDebouncer =
+      Debouncer(delay: const Duration(milliseconds: 300));
 
   @override
   void initState() {
@@ -61,7 +65,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
       case "밸런스게임":
         primaryColor = const Color(0xff7EA090);
         break;
-      case "꿀잼질문":
+      case "연애":
         primaryColor = const Color(0xffF66F48);
         break;
       default:
@@ -131,6 +135,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
     super.dispose();
   }
 
+  // 본 질문 리스트들에 대한 데이터 정보 저장
   _markAsViewed(Question question) {
     List<String> viewedQuestions =
         prefs.getStringList(widget.categoryCode) ?? [];
@@ -138,56 +143,128 @@ class _QuestionScreenState extends State<QuestionScreen> {
     prefs.setStringList(widget.categoryCode, viewedQuestions);
   }
 
+  // 질문들 다 봤을 때 리셋시키는 함수.
   _resetViewedQuestions() {
     prefs.remove(widget.categoryCode);
     _loadQuestions();
   }
 
-  void _loadMoreQuestionsDebounced() {
-    if (_debounce?.isActive ?? false) _debounce?.cancel();
-    _debounce = Timer(const Duration(milliseconds: 300), () {
-      _loadMoreQuestions();
+  // 현재 로드된 질문 이후의 질문을 가져옵니다.
+  void _loadMoreQuestions() {
+    _loadMoreDebouncer.run(() {
+      List<String> viewedQuestions =
+          prefs.getStringList(widget.categoryCode) ?? [];
+
+      // 현재 로드된 질문 이후의 질문을 가져옵니다.
+      List<Question> moreQuestions = questionList
+          .where((questionModel) =>
+              questionModel.categoryCode == widget.categoryCode)
+          .expand((questionModel) => questionModel.questions)
+          .where((question) => !viewedQuestions
+              .contains("${widget.categoryCode}:${question.questionNo}"))
+          .skip(questions.length) // 이미 로드된 질문은 건너뜁니다.
+          .take(11) // 11개의 질문만 가져옵니다.
+          .toList();
+
+      int remainingQuestionsCount = questionList
+          .where((questionModel) =>
+              questionModel.categoryCode == widget.categoryCode)
+          .expand((questionModel) => questionModel.questions)
+          .where((question) => !viewedQuestions
+              .contains("${widget.categoryCode}:${question.questionNo}"))
+          .skip(questions.length) // 이미 로드된 질문은 건너뜁니다.
+          .length;
+
+      // "광고 보고 질문 더보기" 카드 제거
+      questions.removeWhere((question) => question.questionNo == -2);
+
+      setState(() {
+        questions.addAll(moreQuestions);
+        // 남아 있는 질문이 있으면 "광고 보고 질문 더보기" 카드 추가
+        if (remainingQuestionsCount > 0 && remainingQuestionsCount > 11) {
+          questions.add(Question(text: "광고 보고 질문 더보기", questionNo: -2));
+        }
+        if (remainingQuestionsCount <= 11) {
+          questions.add(Question(text: "질문을 모두 보셨습니다.", questionNo: -3));
+        }
+      });
     });
   }
 
-  // 현재 로드된 질문 이후의 질문을 가져옵니다.
-  void _loadMoreQuestions() {
-    List<String> viewedQuestions =
-        prefs.getStringList(widget.categoryCode) ?? [];
+  // 정보 저장 ( 질문 저장 )
+  _savedQuestion(Question question) async {
+    _saveDebouncer.run(() async {
+      // 1. SharedPreferences에서 현재 저장된 북마크 데이터를 가져옵니다.
+      String? savedQuestionsJson = prefs.getString('saved_questions');
+      Map<String, dynamic> savedQuestionsMap = {};
 
-    // 현재 로드된 질문 이후의 질문을 가져옵니다.
-    List<Question> moreQuestions = questionList
-        .where((questionModel) =>
-            questionModel.categoryCode == widget.categoryCode)
-        .expand((questionModel) => questionModel.questions)
-        .where((question) => !viewedQuestions
-            .contains("${widget.categoryCode}:${question.questionNo}"))
-        .skip(questions.length) // 이미 로드된 질문은 건너뜁니다.
-        .take(11) // 11개의 질문만 가져옵니다.
-        .toList();
+      try {
+        // 2. 가져온 데이터를 Dart의 Map 형식으로 변환합니다.
+        if (savedQuestionsJson != null && savedQuestionsJson.isNotEmpty) {
+          savedQuestionsMap = json.decode(savedQuestionsJson);
+        }
 
-    int remainingQuestionsCount = questionList
-        .where((questionModel) =>
-            questionModel.categoryCode == widget.categoryCode)
-        .expand((questionModel) => questionModel.questions)
-        .where((question) => !viewedQuestions
-            .contains("${widget.categoryCode}:${question.questionNo}"))
-        .skip(questions.length) // 이미 로드된 질문은 건너뜁니다.
-        .length;
+        // 3. 해당 카테고리에 질문을 추가하거나 업데이트합니다.
+        // 3. 해당 카테고리에 질문이 이미 저장되어 있는지 확인합니다.
+        if (savedQuestionsMap.containsKey(widget.categoryCode)) {
+          List<Map<String, dynamic>> categoryQuestions =
+              List<Map<String, dynamic>>.from(
+                  savedQuestionsMap[widget.categoryCode]);
+          if (categoryQuestions
+              .any((q) => q['questionNo'] == question.questionNo)) {
+            _showCustomSnackBar(context, "이미 저장된 질문입니다.", isSuccess: false);
+            return;
+          }
+        } else {
+          savedQuestionsMap[widget.categoryCode] = [];
+        }
 
-    // "광고 보고 질문 더보기" 카드 제거
-    questions.removeWhere((question) => question.questionNo == -2);
+        List<dynamic> categoryQuestions =
+            savedQuestionsMap[widget.categoryCode];
+        categoryQuestions.add({
+          'questionNo': question.questionNo,
+          'text': question.text,
+        });
 
-    setState(() {
-      questions.addAll(moreQuestions);
-      // 남아 있는 질문이 있으면 "광고 보고 질문 더보기" 카드 추가
-      if (remainingQuestionsCount > 0 && remainingQuestionsCount > 11) {
-        questions.add(Question(text: "광고 보고 질문 더보기", questionNo: -2));
-      }
-      if (remainingQuestionsCount <= 11) {
-        questions.add(Question(text: "질문을 모두 보셨습니다.", questionNo: -3));
+        // 4. Map을 다시 JSON 문자열로 변환하여 SharedPreferences에 저장합니다.
+        String updatedSavedQuestionsJson = json.encode(savedQuestionsMap);
+        await prefs.setString('saved_questions', updatedSavedQuestionsJson);
+        // 저장 로직
+        _showCustomSnackBar(context, "저장 성공!", isSuccess: true);
+      } catch (e) {
+        _showCustomSnackBar(context, "저장 실패.", isSuccess: false);
       }
     });
+  }
+
+  void _showCustomSnackBar(BuildContext context, String message,
+      {bool isSuccess = true}) {
+    final snackBar = SnackBar(
+      content: Row(
+        children: [
+          Icon(
+            isSuccess ? Icons.check_circle : Icons.error,
+            color: isSuccess ? Colors.green : Colors.red,
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              message,
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+      backgroundColor: Colors.black87,
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+      ),
+      margin: const EdgeInsets.all(10),
+      duration: const Duration(seconds: 2),
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @override
@@ -205,7 +282,9 @@ class _QuestionScreenState extends State<QuestionScreen> {
                     controller: _swiperController, // Swiper에 컨트롤러 연결
                     loop: false,
                     onIndexChanged: (index) {
-                      _currentIndex = index;
+                      setState(() {
+                        _currentIndex = index;
+                      });
                       _startViewedTimer(); // 카드가 바뀔 때마다 타이머 시작
                     },
                     itemBuilder: (BuildContext context, int index) {
@@ -216,18 +295,25 @@ class _QuestionScreenState extends State<QuestionScreen> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16.0),
                           ),
-                          child: Center(
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Text(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.swipe_up_outlined,
+                                size: 60,
+                                color: primaryColor,
+                              ),
+                              const SizedBox(height: 20),
+                              Text(
                                 questions[index].text,
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(
                                   fontSize: 14.0,
-                                  color: Colors.black,
+                                  color: Color(0xff2f2f2f),
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-                            ),
+                            ],
                           ),
                         );
                       } else if (questions[index].questionNo == -2) {
@@ -246,7 +332,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
                                       Colors.blueGrey,
                                     ),
                                   ),
-                                  onPressed: _loadMoreQuestionsDebounced,
+                                  onPressed: _loadMoreQuestions,
                                   child: Text(
                                     questions[index].text,
                                     style: const TextStyle(
@@ -376,16 +462,31 @@ class _QuestionScreenState extends State<QuestionScreen> {
                     scrollDirection: Axis.vertical,
                   ),
             Positioned(
-              top: 40.0,
-              right: 20.0,
+              top: 55.0,
+              right: 0.0,
               child: IconButton(
-                icon: const Icon(Icons.close, color: Colors.white),
+                icon: const Icon(Icons.close, color: Colors.white, size: 32),
                 onPressed: () {
                   // Handle the close action
                   Navigator.pop(context);
                 },
               ),
             ),
+            if (questions.isNotEmpty && questions[_currentIndex].questionNo > 0)
+              Positioned(
+                top: 55.0,
+                left: 0.0,
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.bookmark_add,
+                    color: Colors.white,
+                    size: 32,
+                  ),
+                  onPressed: () {
+                    _savedQuestion(questions[_currentIndex]);
+                  },
+                ),
+              ),
           ],
         ),
       ),
