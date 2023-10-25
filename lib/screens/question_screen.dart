@@ -9,6 +9,7 @@ import '../data/game_data.dart';
 import '../data/question_data.dart';
 import '../models/question.dart';
 import '../utils/debounce.dart';
+import '../widgets/custom_snackbar.dart';
 import '../widgets/roulette_widget.dart';
 
 class QuestionScreen extends StatefulWidget {
@@ -242,7 +243,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
                   savedQuestionsMap[widget.categoryCode]);
           if (categoryQuestions
               .any((q) => q['questionNo'] == question.questionNo)) {
-            _showCustomSnackBar(context, "이미 저장된 질문입니다.", isSuccess: false);
+            showCustomSnackBar(context, "이미 저장된 질문입니다.", isSuccess: false);
             return;
           }
         } else {
@@ -260,41 +261,11 @@ class _QuestionScreenState extends State<QuestionScreen> {
         String updatedSavedQuestionsJson = json.encode(savedQuestionsMap);
         await prefs.setString('saved_questions', updatedSavedQuestionsJson);
         // 저장 로직
-        _showCustomSnackBar(context, "저장 성공!", isSuccess: true);
+        showCustomSnackBar(context, "저장 성공!", isSuccess: true);
       } catch (e) {
-        _showCustomSnackBar(context, "저장 실패.", isSuccess: false);
+        showCustomSnackBar(context, "저장 실패.", isSuccess: false);
       }
     });
-  }
-
-  void _showCustomSnackBar(BuildContext context, String message,
-      {bool isSuccess = true}) {
-    final snackBar = SnackBar(
-      content: Row(
-        children: [
-          Icon(
-            isSuccess ? Icons.check_circle : Icons.error,
-            color: isSuccess ? Colors.green : Colors.red,
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              message,
-              style: const TextStyle(color: Colors.white),
-            ),
-          ),
-        ],
-      ),
-      backgroundColor: Colors.black87,
-      behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(24),
-      ),
-      margin: const EdgeInsets.all(10),
-      duration: const Duration(seconds: 2),
-    );
-
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
 // 룰렛 아이콘 버튼 클릭 시 호출되는 함수

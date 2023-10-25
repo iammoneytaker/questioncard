@@ -36,6 +36,9 @@ dependencies:
   cupertino_icons: ^1.0.2
   shared_preferences: ^2.2.2
   card_swiper: ^3.0.1
+  url_launcher: ^6.0.12
+  package_info: ^2.0.2
+  device_info: ^2.0.3
 
 dev_dependencies:
   flutter_test:
