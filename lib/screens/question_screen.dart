@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../data/question_data.dart';
 import '../models/question.dart';
 import '../utils/debounce.dart';
+import '../widgets/roulette_widget.dart';
 
 class QuestionScreen extends StatefulWidget {
   final String categoryCode;
@@ -31,9 +32,11 @@ class _QuestionScreenState extends State<QuestionScreen> {
       SwiperController(); // Swiper 컨트롤러 추가
   // 카드들에 대한 상태값
 
+  // 함수 Debouncer
   final _saveDebouncer = Debouncer(delay: const Duration(milliseconds: 300));
   final _loadMoreDebouncer =
       Debouncer(delay: const Duration(milliseconds: 300));
+  // 함수 Debouncer
 
   @override
   void initState() {
@@ -267,6 +270,23 @@ class _QuestionScreenState extends State<QuestionScreen> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
+// 룰렛 아이콘 버튼 클릭 시 호출되는 함수
+  void _showRouletteModal() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return const AlertDialog(
+          title: Text('룰렛 돌리기'),
+          content: SizedBox(
+            width: 250,
+            height: 300, // 높이를 조금 더 늘려서 버튼들이 잘 보이게 합니다.
+            child: RouletteWidget(),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -487,6 +507,18 @@ class _QuestionScreenState extends State<QuestionScreen> {
                   },
                 ),
               ),
+            Positioned(
+              top: 55.0,
+              left: MediaQuery.of(context).size.width / 2 - 32,
+              child: IconButton(
+                icon: const Icon(
+                  Icons.explore,
+                  size: 32,
+                  color: Colors.white,
+                ), // 룰렛 아이콘
+                onPressed: _showRouletteModal,
+              ),
+            ),
           ],
         ),
       ),

@@ -6,6 +6,48 @@ import '../data/category_data.dart';
 class CategorySelectScreen extends StatelessWidget {
   const CategorySelectScreen({super.key});
 
+  IconData getIconForCategory(String categoryName) {
+    switch (categoryName) {
+      case '연애':
+        return Icons.favorite;
+      case '일상':
+        return Icons.wb_sunny;
+      case '친구':
+        return Icons.group;
+      case '대학생':
+        return Icons.school;
+      case '진로':
+        return Icons.work;
+      case '인생':
+        return Icons.accessibility_new;
+      case '밸런스게임':
+        return Icons.gamepad;
+      default:
+        return Icons.category; // 기본 아이콘
+    }
+  }
+
+  Color getIconColorForCategory(String categoryName) {
+    switch (categoryName) {
+      case '연애':
+        return Colors.red;
+      case '일상':
+        return Colors.yellow.shade600;
+      case '친구':
+        return const Color(0xff4FBEE5);
+      case '대학생':
+        return const Color(0xffA799F8);
+      case '진로':
+        return const Color(0xff303030);
+      case '인생':
+        return const Color(0xff18413E);
+      case '밸런스게임':
+        return Colors.red;
+      default:
+        return Colors.black; // 기본 아이콘
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -47,40 +89,44 @@ class CategorySelectScreen extends StatelessWidget {
                   ),
                 );
               },
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
+              child: Stack(
                 children: [
-                  // 카테고리 이름
-                  Padding(
-                    padding: const EdgeInsets.only(top: 16.0),
+                  // 카테고리 이름 (맨 위)
+                  Positioned(
+                    top: 16.0,
+                    left: 16.0,
                     child: Text(
                       categories[index].name,
                       style: const TextStyle(
                           fontSize: 18.0, fontWeight: FontWeight.bold),
                     ),
                   ),
-                  const Spacer(),
-                  // 해시태그들
-                  Align(
-                    alignment: Alignment.bottomRight,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        mainAxisSize: MainAxisSize.min,
-                        children: categories[index]
-                            .hashTags
-                            .map((tag) => Text(
-                                  '#$tag',
-                                  style: const TextStyle(
-                                    color: Color(0xffF5988D),
-                                    fontSize: 12.0,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ))
-                            .toList(),
-                      ),
+                  // 아이콘 (정 중앙)
+                  Center(
+                    child: Icon(
+                      getIconForCategory(categories[index].name),
+                      size: 50.0,
+                      color: getIconColorForCategory(
+                          categories[index].name), // 아이콘 색상도 다르게 설정
+                    ),
+                  ),
+                  // 해시태그들 (맨 아래)
+                  Positioned(
+                    bottom: 8.0,
+                    right: 8.0,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: categories[index]
+                          .hashTags
+                          .map((tag) => Text(
+                                '#$tag',
+                                style: const TextStyle(
+                                  color: Color(0xffF5988D),
+                                  fontSize: 12.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ))
+                          .toList(),
                     ),
                   ),
                 ],

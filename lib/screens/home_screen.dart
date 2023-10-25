@@ -44,12 +44,15 @@ class _HomeScreenState extends State<HomeScreen> {
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) => Scaffold(
           appBar: AppBar(
-            leading: IconButton(
-              icon: const Icon(Icons.cancel, color: Colors.white),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
+            automaticallyImplyLeading: false,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.cancel, color: Colors.white),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
             backgroundColor: const Color(0xff429FBF),
           ),
           body: page,
