@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../data/game_data.dart';
 import '../data/question_data.dart';
 import '../models/question.dart';
 import '../utils/debounce.dart';
@@ -25,6 +27,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
   late SharedPreferences prefs;
   Color primaryColor = const Color(0xff303030);
 
+  bool isGameSettingOn = true; // 게임 설정 기본값
   // 카드들에 대한 상태값
   Timer? _viewedTimer; // Timer 객체
   int _currentIndex = 0; // 현재 보이는 카드의 인덱스
@@ -80,6 +83,20 @@ class _QuestionScreenState extends State<QuestionScreen> {
 
   Future<void> _loadPreferences() async {
     prefs = await SharedPreferences.getInstance();
+    isGameSettingOn = prefs.getBool('game_setting') ?? true; // 게임 설정값 불러오기
+  }
+
+  _insertGameCard(List<Question> questionsList) {
+    if (questionsList.length <= 5) {
+      return; // 질문 카드가 5개 이하면 함수를 종료하고 게임 카드를 추가하지 않습니다.
+    }
+    int randomIndex = (questionsList.length * 0.9).toInt();
+    String randomGameCard = gameCardData[Random().nextInt(gameCardData.length)];
+    questionsList.insert(
+        randomIndex,
+        Question(
+            text: randomGameCard,
+            questionNo: -5)); // -5는 게임 카드를 나타내는 임의의 번호입니다.
   }
 
   _loadQuestions() {
@@ -114,9 +131,14 @@ class _QuestionScreenState extends State<QuestionScreen> {
 
     // "광고 보고 질문 더보기" 카드 추가
     if (filteredQuestions.length > 11) {
-      initialQuestions.add(Question(text: "광고 보고 질문 더보기", questionNo: -2));
+      initialQuestions.add(Question(text: "질문 더 불러오기", questionNo: -2));
     } else if (filteredQuestions.length > 1 && filteredQuestions.length <= 11) {
-      initialQuestions.add(Question(text: "광고 보고 질문 더보기", questionNo: -2));
+      initialQuestions.add(Question(text: "질문 더 불러오기", questionNo: -2));
+    }
+
+    // 게임 설정이 ON인 경우 10개의 질문 카드 중 1개의 게임 카드를 랜덤하게 추가
+    if (isGameSettingOn) {
+      _insertGameCard(initialQuestions); // 여기를 수정했습니다.
     }
 
     setState(() {
@@ -178,12 +200,17 @@ class _QuestionScreenState extends State<QuestionScreen> {
           .skip(questions.length) // 이미 로드된 질문은 건너뜁니다.
           .length;
 
-      // "광고 보고 질문 더보기" 카드 제거
+      // "질문 더 불러오기 질문 더보기" 카드 제거
       questions.removeWhere((question) => question.questionNo == -2);
 
+      // 게임 설정이 ON인 경우 10개의 질문 카드 중 1개의 게임 카드를 랜덤하게 추가
+      if (isGameSettingOn && moreQuestions.length > 5) {
+        // 5개 이상일 때만 게임 카드 추가
+        _insertGameCard(moreQuestions);
+      }
       setState(() {
         questions.addAll(moreQuestions);
-        // 남아 있는 질문이 있으면 "광고 보고 질문 더보기" 카드 추가
+        // 남아 있는 질문이 있으면 "질문 더 불러오기 질문 더보기" 카드 추가
         if (remainingQuestionsCount > 0 && remainingQuestionsCount > 11) {
           questions.add(Question(text: "광고 보고 질문 더보기", questionNo: -2));
         }
@@ -430,6 +457,60 @@ class _QuestionScreenState extends State<QuestionScreen> {
                                 ],
                               ),
                             ),
+                          ),
+                        );
+                      } else if (questions[index].questionNo == -5) {
+                        // 게임 카드 렌더링
+                        return Card(
+                          color: Colors.yellow.shade200, // 게임 카드의 색상
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16.0),
+                          ),
+                          child: Stack(
+                            children: [
+                              // "GAME" 텍스트 추가
+                              const Positioned(
+                                top: 8.0,
+                                left: 0,
+                                right: 0,
+                                child: Center(
+                                  child: Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: 20.0),
+                                    child: Text(
+                                      "GAME CARD",
+                                      style: TextStyle(
+                                        fontSize: 24.0,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              // 빨간색 테두리와 텍스트 추가
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: Colors.red, width: 2.0),
+                                    borderRadius: BorderRadius.circular(14.0),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      questions[index].text,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        fontSize: 24.0,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         );
                       } else {
