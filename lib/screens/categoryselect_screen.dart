@@ -50,11 +50,22 @@ class CategorySelectScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 화면의 방향을 확인합니다.
+    Orientation orientation = MediaQuery.of(context).orientation;
+    // 화면의 너비를 확인합니다.
+    double width = MediaQuery.of(context).size.width;
+
+    // 화면의 방향과 너비에 따라 crossAxisCount 값을 결정합니다.
+    int crossAxisCount = 2; // 기본값
+    if (orientation == Orientation.landscape || width > 600) {
+      // 가로 모드이거나 화면 너비가 600픽셀보다 큰 경우
+      crossAxisCount = 3;
+    }
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, // 한 줄에 2개의 카드
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: crossAxisCount, // 한 줄에 2~3개의 카드
           childAspectRatio: 0.7, // 카드의 가로/세로 비율
           crossAxisSpacing: 10, // 카드 간의 가로 간격
           mainAxisSpacing: 10, // 카드 간의 세로 간격

@@ -274,7 +274,6 @@ class _QuestionScreenState extends State<QuestionScreen> {
       context: context,
       builder: (BuildContext context) {
         return const AlertDialog(
-          title: Text('룰렛 돌리기'),
           content: SizedBox(
             width: 250,
             height: 300, // 높이를 조금 더 늘려서 버튼들이 잘 보이게 합니다.
@@ -287,6 +286,8 @@ class _QuestionScreenState extends State<QuestionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: primaryColor,
       body: Padding(
@@ -534,7 +535,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
                     scrollDirection: Axis.vertical,
                   ),
             Positioned(
-              top: 55.0,
+              top: screenHeight * 0.05, // 예: 화면 높이의 10% 위치
               right: 0.0,
               child: IconButton(
                 icon: const Icon(Icons.close, color: Colors.white, size: 32),
@@ -546,7 +547,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
             ),
             if (questions.isNotEmpty && questions[_currentIndex].questionNo > 0)
               Positioned(
-                top: 55.0,
+                top: screenHeight * 0.05, // 예: 화면 높이의 10% 위치
                 left: 0.0,
                 child: IconButton(
                   icon: const Icon(
@@ -560,8 +561,8 @@ class _QuestionScreenState extends State<QuestionScreen> {
                 ),
               ),
             Positioned(
-              top: 55.0,
-              left: MediaQuery.of(context).size.width / 2 - 32,
+              top: screenHeight * 0.05, // 예: 화면 높이의 10% 위치
+              left: screenWidth / 2 - 32,
               child: IconButton(
                 icon: const Icon(
                   Icons.explore,
