@@ -1,8 +1,10 @@
 import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:package_info/package_info.dart';
+import 'package:questioncard/data/ad_data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -70,14 +72,80 @@ class _SettingScreenState extends State<SettingScreen> {
             TextButton(
               child: const Text('확인'),
               onPressed: () {
-                _resetAllViewedQuestions(); // 모든 질문 초기화
-                Navigator.of(context).pop(); // 대화상자 닫기
+                // 로딩 다이얼로그 표시
+                showDialog(
+                  context: context,
+                  barrierDismissible: false, // 사용자가 다이얼로그 외부를 터치하여 닫을 수 없게 함
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      content: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          CircularProgressIndicator(),
+                          SizedBox(width: 20),
+                          Text("광고 로드 중 입니다.. 잠시만 기다려주세요..(🥹)"),
+                        ],
+                      ),
+                    );
+                  },
+                );
+
+                showRewardFullBanner(context, () async {
+                  Navigator.of(context).pop(); // 로딩 다이얼로그 닫기
+                  Navigator.of(context).pop(); // 초기화 다이얼로그 닫기
+
+                  try {
+                    _resetAllViewedQuestions(); // 모든 질문 초기화
+                  } catch (e) {
+                    showCustomSnackBar(
+                      context,
+                      "초기화에 실패했습니다.",
+                      isSuccess: false,
+                    );
+                  }
+                });
               },
             ),
           ],
         );
       },
     );
+  }
+
+  void _showChangeGameStaetDialog(bool value) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 사용자가 다이얼로그 외부를 터치하여 닫을 수 없게 함
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              CircularProgressIndicator(),
+              SizedBox(width: 20),
+              Text("광고 로드 중 입니다.. 잠시만 기다려주세요..(🥹)"),
+            ],
+          ),
+        );
+      },
+    );
+
+    showRewardFullBanner(context, () async {
+      Navigator.of(context).pop(); // 로딩 다이얼로그 닫기
+
+      try {
+        setState(() {
+          _isGameSettingOn = value;
+        });
+        _saveGameSetting(value); // 게임 설정 저장
+      } catch (e) {
+        showCustomSnackBar(
+          context,
+          '상태 변경에 실패했습니다.',
+          isSuccess: false,
+        );
+      }
+    });
   }
 
   void _sendEmail() async {
@@ -197,10 +265,7 @@ class _SettingScreenState extends State<SettingScreen> {
           title: const Text('질문카드에 게임카드 나오게하기'),
           value: _isGameSettingOn,
           onChanged: (bool value) {
-            setState(() {
-              _isGameSettingOn = value;
-            });
-            _saveGameSetting(value); // 게임 설정 저장
+            _showChangeGameStaetDialog(value);
           },
         ),
         const Divider(), // 구분선 추가
@@ -230,6 +295,35 @@ class _SettingScreenState extends State<SettingScreen> {
         ),
         const Divider(), // 구분선 추가
       ],
+    );
+  }
+
+  void showRewardFullBanner(BuildContext context, Function callback) async {
+    await RewardedInterstitialAd.load(
+      adUnitId: REWARD_INTERSTRITIAL_ADID,
+      request: const AdRequest(),
+      rewardedInterstitialAdLoadCallback:
+          RewardedInterstitialAdLoadCallback(onAdLoaded: (ad) {
+        ad.fullScreenContentCallback = FullScreenContentCallback(
+          onAdDismissedFullScreenContent: (RewardedInterstitialAd ad) {
+            print('1');
+            ad.dispose();
+          },
+          onAdFailedToShowFullScreenContent:
+              (RewardedInterstitialAd ad, AdError error) {
+            print('2');
+            ad.dispose();
+          },
+        );
+
+        ad.show(onUserEarnedReward: (ad, reward) {
+          print('3');
+          callback(); // 광고 시청 보상 후 초기화 콜백 호출
+        });
+      }, onAdFailedToLoad: (_) {
+        print(_);
+        callback(); // 광고 로드 실패 시 초기화 콜백 호출
+      }),
     );
   }
 }

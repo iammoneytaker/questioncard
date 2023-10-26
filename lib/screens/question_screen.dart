@@ -4,7 +4,9 @@ import 'dart:math';
 
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../data/ad_data.dart';
 import '../data/game_data.dart';
 import '../data/question_data.dart';
 import '../models/question.dart';
@@ -28,6 +30,11 @@ class _QuestionScreenState extends State<QuestionScreen> {
   late SharedPreferences prefs;
   Color primaryColor = const Color(0xff303030);
 
+  // AD STATE
+  BannerAd? _bannerAd;
+  bool _isBannerAdReady = false;
+  // AD STATE
+
   bool isGameSettingOn = true; // 게임 설정 기본값
   // 카드들에 대한 상태값
   Timer? _viewedTimer; // Timer 객체
@@ -49,6 +56,31 @@ class _QuestionScreenState extends State<QuestionScreen> {
       _loadQuestions();
     });
     _setPrimaryColor();
+    _loadBannerAd();
+  }
+
+  _loadBannerAd() {
+    _bannerAd = BannerAd(
+      adUnitId: BANNER_ADID,
+      size: AdSize.banner,
+      request: const AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (Ad ad) {
+          print('$ad loaded.');
+          setState(() {
+            _isBannerAdReady = true;
+          });
+        },
+        onAdFailedToLoad: (Ad ad, LoadAdError error) {
+          print('$ad failed to load: $error');
+          ad.dispose();
+          setState(() {
+            _isBannerAdReady = false;
+          });
+        },
+      ),
+    );
+    _bannerAd!.load();
   }
 
   _setPrimaryColor() {
@@ -158,6 +190,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
   @override
   void dispose() {
     _viewedTimer?.cancel(); // 화면이 종료될 때 타이머를 취소
+    _bannerAd?.dispose();
     super.dispose();
   }
 
@@ -209,6 +242,9 @@ class _QuestionScreenState extends State<QuestionScreen> {
         // 5개 이상일 때만 게임 카드 추가
         _insertGameCard(moreQuestions);
       }
+      _bannerAd?.dispose();
+      _loadBannerAd();
+
       setState(() {
         questions.addAll(moreQuestions);
         // 남아 있는 질문이 있으면 "질문 더 불러오기 질문 더보기" 카드 추가
@@ -304,6 +340,8 @@ class _QuestionScreenState extends State<QuestionScreen> {
                       setState(() {
                         _currentIndex = index;
                       });
+                      _bannerAd?.dispose();
+                      _loadBannerAd();
                       _startViewedTimer(); // 카드가 바뀔 때마다 타이머 시작
                     },
                     itemBuilder: (BuildContext context, int index) {
@@ -571,6 +609,16 @@ class _QuestionScreenState extends State<QuestionScreen> {
                 ), // 룰렛 아이콘
                 onPressed: _showRouletteModal,
               ),
+            ),
+            Positioned(
+              bottom: 0.0,
+              child: _isBannerAdReady
+                  ? SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      height: 50, // 배너 광고의 높이
+                      child: AdWidget(ad: _bannerAd!),
+                    )
+                  : Container(),
             ),
           ],
         ),
