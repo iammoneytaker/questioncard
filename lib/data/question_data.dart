@@ -267,7 +267,7 @@ List<QuestionModel> questionList = [
     category: '밸런스게임',
     categoryCode: '05',
     questions: [
-      Question(text: "10억 받고 얼굴 갈아 엎기 vs 지금 얼굴 그대로 살기", questionNo: 1),
+      Question(text: "10억 받고 얼굴 랜덤 돌리기 vs 지금 얼굴 그대로 살기", questionNo: 1),
       Question(
           text: "내 생일 일주일 전 애인이 바람 피운 사실을 알면 바로 이별 vs 선물 받고 이별", questionNo: 2),
       Question(text: "바보 같고 순수한 사람 VS 똑똑하고 재수 없는 사람", questionNo: 3),
