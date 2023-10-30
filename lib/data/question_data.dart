@@ -378,7 +378,7 @@ List<QuestionModel> questionList = [
       Question(text: "애인의 폰을 보다가 우연히 전 애인의 사진을 보게 된다면?", questionNo: 8),
       Question(
           text: "친구랑 썸 탔던 사람이 너무 내 스타일, 게다가 나한테 대쉬함 어떻게 할거야?", questionNo: 9),
-      Question(text: "카페에서 라떼를 시켰는데 아이스 아메리카노가 나온다면?", questionNo: 10),
+      Question(text: "애인이랑 카페에서 라떼를 시켰는데 아이스 아메리카노가 나온다면?", questionNo: 10),
       Question(text: "체중증가가 헤어지는 이유가 될 수 있을 것 같아?", questionNo: 11),
       Question(text: "애인이 나를 찾아올 때 어디까지 가능? Ex) 집, 학교, 직장", questionNo: 12),
       Question(text: "1년동안 가장 이루고 싶은 목표는?", questionNo: 13),
