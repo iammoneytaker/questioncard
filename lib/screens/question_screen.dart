@@ -396,6 +396,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
                                       fontSize: 14.0,
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
+                                      fontFamily: 'HamChorong',
                                     ),
                                   ),
                                 )
@@ -419,6 +420,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
                                 style: const TextStyle(
                                   fontSize: 14.0,
                                   color: Colors.black,
+                                  fontFamily: 'HamChorong',
                                 ),
                               ),
                             ),
@@ -445,6 +447,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
                                       fontSize: 16.0,
                                       color: Colors.black,
                                       fontWeight: FontWeight.bold,
+                                      fontFamily: 'HamChorong',
                                     ),
                                   ),
                                   ElevatedButton(
@@ -461,6 +464,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
                                         fontSize: 14.0,
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
+                                        fontFamily: 'HamChorong',
                                       ),
                                     ),
                                   )
@@ -493,6 +497,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
                                         fontSize: 24.0,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.red,
+                                        fontFamily: 'HamChorong',
                                       ),
                                     ),
                                   ),
@@ -515,6 +520,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
                                         fontSize: 24.0,
                                         color: Colors.black,
                                         fontWeight: FontWeight.bold,
+                                        fontFamily: 'HamChorong',
                                       ),
                                     ),
                                   ),
@@ -545,6 +551,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
                                       fontSize: 18.0,
                                       color: primaryColor,
                                       fontWeight: FontWeight.bold,
+                                      fontFamily: 'HamChorong',
                                     ),
                                   ),
                                 ),
@@ -558,6 +565,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
                                     style: const TextStyle(
                                       fontSize: 24.0,
                                       color: Colors.black,
+                                      fontFamily: 'HamChorong',
                                     ),
                                   ),
                                 ),
