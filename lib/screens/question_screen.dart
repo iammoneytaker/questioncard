@@ -249,7 +249,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
         questions.addAll(moreQuestions);
         // 남아 있는 질문이 있으면 "질문 더 불러오기 질문 더보기" 카드 추가
         if (remainingQuestionsCount > 0 && remainingQuestionsCount > 11) {
-          questions.add(Question(text: "광고 보고 질문 더보기", questionNo: -2));
+          questions.add(Question(text: "질문 더보기", questionNo: -2));
         }
         if (remainingQuestionsCount <= 11) {
           questions.add(Question(text: "질문을 모두 보셨습니다.", questionNo: -3));
