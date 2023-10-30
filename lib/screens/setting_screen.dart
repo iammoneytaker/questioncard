@@ -83,7 +83,13 @@ class _SettingScreenState extends State<SettingScreen> {
                         children: const [
                           CircularProgressIndicator(),
                           SizedBox(width: 20),
-                          Text("광고 로드 중 입니다.. 잠시만 기다려주세요..(🥹)"),
+                          Expanded(
+                            // Expanded 위젯 사용
+                            child: Text(
+                              "광고 로드 중 입니다..\n잠시만 기다려주세요..(🥹)",
+                              textAlign: TextAlign.center, // 텍스트 정렬
+                            ),
+                          ),
                         ],
                       ),
                     );
@@ -123,7 +129,13 @@ class _SettingScreenState extends State<SettingScreen> {
             children: const [
               CircularProgressIndicator(),
               SizedBox(width: 20),
-              Text("광고 로드 중 입니다.. 잠시만 기다려주세요..(🥹)"),
+              Expanded(
+                // Expanded 위젯 사용
+                child: Text(
+                  "광고 로드 중 입니다..\n잠시만 기다려주세요..(🥹)",
+                  textAlign: TextAlign.center, // 텍스트 정렬
+                ),
+              ),
             ],
           ),
         );
