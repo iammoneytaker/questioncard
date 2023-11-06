@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:questioncard/screens/question_screen.dart';
+import 'package:questioncard/screens/questioncard/question_screen.dart';
 
-import '../data/category_data.dart';
+import '../../data/category_data.dart';
 
 class CategorySelectScreen extends StatelessWidget {
   const CategorySelectScreen({super.key});

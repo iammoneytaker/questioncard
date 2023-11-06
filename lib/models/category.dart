@@ -6,3 +6,10 @@ class Category {
   Category(
       {required this.name, required this.categoryCode, required this.hashTags});
 }
+
+class LiarCategory {
+  final String name;
+  final String categoryCode;
+
+  LiarCategory({required this.name, required this.categoryCode});
+}

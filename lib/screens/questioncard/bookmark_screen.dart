@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../data/category_data.dart';
-import '../models/question.dart';
+import '../../data/category_data.dart';
+import '../../models/question.dart';
 
 class BookMarkScreen extends StatefulWidget {
   const BookMarkScreen({super.key});

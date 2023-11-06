@@ -6,13 +6,13 @@ import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../data/ad_data.dart';
-import '../data/game_data.dart';
-import '../data/question_data.dart';
-import '../models/question.dart';
-import '../utils/debounce.dart';
-import '../widgets/custom_snackbar.dart';
-import '../widgets/roulette_widget.dart';
+import '../../data/ad_data.dart';
+import '../../data/game_data.dart';
+import '../../data/question_data.dart';
+import '../../models/question.dart';
+import '../../utils/debounce.dart';
+import '../../widgets/custom_snackbar.dart';
+import '../../widgets/roulette_widget.dart';
 
 class QuestionScreen extends StatefulWidget {
   final String categoryCode;

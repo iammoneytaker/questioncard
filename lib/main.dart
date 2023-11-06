@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:provider/provider.dart';
+import 'package:questioncard/providers/gamesetting.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/home_screen.dart';
 import 'screens/intro_screen.dart'; // IntroScreen 위젯이 정의된 파일을 import 해야 합니다.
@@ -11,7 +13,12 @@ void main() async {
 
   MobileAds.instance.initialize();
 
-  runApp(MyApp(introShown: introShown));
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => GameSettings(),
+      child: MyApp(introShown: introShown),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
