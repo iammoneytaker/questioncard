@@ -10,6 +10,8 @@ class Category {
 class LiarCategory {
   final String name;
   final String categoryCode;
+  final List<String> words;
 
-  LiarCategory({required this.name, required this.categoryCode});
+  LiarCategory(
+      {required this.name, required this.categoryCode, required this.words});
 }

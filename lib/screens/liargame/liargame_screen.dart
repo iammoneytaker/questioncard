@@ -4,12 +4,19 @@ import 'package:provider/provider.dart';
 
 import '../../data/category_data.dart';
 import '../../providers/gamesetting.dart';
+import 'gameplay_screen.dart';
 
 class LiarGameScreen extends StatelessWidget {
   const LiarGameScreen({Key? key}) : super(key: key);
   final Color primaryColor = const Color(0xffF5988D); // AppBar 색상
   final Color cardBackgroundColor = const Color(0xff343541); // 카드 배경색
   final Color appBarColor = const Color(0xff375A7F); // AppBar 색상 변경
+
+  // 라이어게임 카테고리별 데이터 구현 안되어 있음.
+  // 라이어게임 카테고리별 데이터 가져와서 랜덤으로 보여주는 것 구현 안되어있음
+
+  // TODO: 카테고리에 데이터만 꾸겨 넣으면 됌.
+  // TODO: 인물퀴즈, 노래 맞추기
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +49,8 @@ class LiarGameScreen extends StatelessWidget {
           return _buildCategoryCard(
             title: liargameCategories[index].name,
             onTap: () {
-              _showGameStartDialog(context, liargameCategories[index].name);
+              _showGameStartDialog(context, liargameCategories[index].name,
+                  liargameCategories[index].categoryCode);
             },
           );
         },
@@ -80,7 +88,8 @@ class LiarGameScreen extends StatelessWidget {
     );
   }
 
-  void _showGameStartDialog(BuildContext context, String categoryName) {
+  void _showGameStartDialog(
+      BuildContext context, String categoryName, String categoryCode) {
     var gameSettings = Provider.of<GameSettings>(context, listen: false);
 
     showDialog(
@@ -114,12 +123,14 @@ class LiarGameScreen extends StatelessWidget {
                 const SizedBox(height: 10),
                 Row(
                   children: [
-                    Text(
-                      '선택한 카테고리: $categoryName',
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'HamChorong',
+                    Expanded(
+                      child: Text(
+                        '선택한 카테고리: $categoryName',
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'HamChorong',
+                        ),
                       ),
                     ),
                   ],
@@ -224,8 +235,21 @@ class LiarGameScreen extends StatelessWidget {
                     ),
                     child: const Text('시작'),
                     onPressed: () {
-                      // TODO: 게임 시작 로직 구현
-                      Navigator.pop(context); // 대화 상자 닫기
+                      var gameSettings =
+                          Provider.of<GameSettings>(context, listen: false);
+
+                      Navigator.pop(context); // 설정 화면을 닫습니다.
+                      // 게임 설정 데이터를 새로운 화면으로 전달하면서 화면을 전환합니다.
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => GamePlayScreen(
+                            gameSettings: gameSettings, // 게임 설정 데이터 전달
+                            categoryName: categoryName, // 선택된 카테고리 이름 전달
+                            categoryCode: categoryCode,
+                          ),
+                        ),
+                      );
                     },
                   ),
                 ),
@@ -336,10 +360,18 @@ class LiarGameScreen extends StatelessWidget {
       '총 참여인원 수를 설정해주세요.',
       currentNumberOfPlayers - 1, // 0부터 시작하는 인덱스로 변환
       (int selectedIndex) {
-        // 사용자가 새로운 인원 수를 선택했을 때 호출될 콜백
-        gameSettings.setNumberOfPlayers(selectedIndex + 1);
-        // 상태 변경을 감지하여 UI를 업데이트합니다.
-        (context as Element).markNeedsBuild();
+        int newNumberOfPlayers = selectedIndex + 1;
+        // 라이어 인원보다 참여 인원이 많은지 확인합니다.
+        if (newNumberOfPlayers <= gameSettings.numberOfLiars) {
+          // 에러 메시지를 표시합니다.
+          print('?!!!');
+          _showErrorDialog(context, '참여 인원은 라이어 인원보다 많아야 합니다.');
+        } else {
+          // 사용자가 새로운 인원 수를 선택했을 때 호출될 콜백
+          gameSettings.setNumberOfPlayers(newNumberOfPlayers);
+          // 상태 변경을 감지하여 UI를 업데이트합니다.
+          (context as Element).markNeedsBuild();
+        }
       },
       false,
     );
@@ -357,13 +389,42 @@ class LiarGameScreen extends StatelessWidget {
       '총 라이어 수를 설정해주세요.',
       currentNumberOfLiars - 1, // 0부터 시작하는 인덱스로 변환
       (int selectedIndex) {
-        // 사용자가 새로운 인원 수를 선택했을 때 호출될 콜백
-        gameSettings.setNumberOfLiars(selectedIndex + 1);
-        // 상태 변경을 감지하여 UI를 업데이트합니다.
-        (context as Element).markNeedsBuild();
+        int newNumberOfLiars = selectedIndex + 1;
+        // 라이어 인원보다 참여 인원이 많은지 확인합니다.
+        if (newNumberOfLiars >= gameSettings.numberOfLiars) {
+          // 에러 메시지를 표시합니다.
+          _showErrorDialog(context, '라이어 인원은 참여 인원보다 작아야 합니다.');
+        } else {
+          // 사용자가 새로운 인원 수를 선택했을 때 호출될 콜백
+          gameSettings.setNumberOfLiars(selectedIndex + 1);
+          // 상태 변경을 감지하여 UI를 업데이트합니다.
+          (context as Element).markNeedsBuild();
+        }
       },
       false,
     );
+  }
+
+  void _showErrorDialog(BuildContext context, String errorMessage) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('오류'),
+            content: Text(errorMessage),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('확인'),
+                onPressed: () {
+                  Navigator.of(context).pop(); // 다이얼로그를 닫습니다.
+                },
+              ),
+            ],
+          );
+        },
+      );
+    });
   }
 
   void _changeMode(BuildContext context, GameSettings gameSettings) {

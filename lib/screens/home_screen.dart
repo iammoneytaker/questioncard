@@ -44,6 +44,9 @@ class _HomeScreenState extends State<HomeScreen> {
         padding: const EdgeInsets.all(12.0),
         child: GridView.count(
           crossAxisCount: 2,
+          childAspectRatio: 0.7, // 카드의 가로/세로 비율
+          crossAxisSpacing: 10, // 카드 간의 가로 간격
+          mainAxisSpacing: 10, // 카드 간의 세로 간격
           children: <Widget>[
             _buildCategoryCard(
               title: '질문 카드',
@@ -55,6 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   builder: (context) => const QuestionCardScreen(),
                 ));
               },
+              hashTags: ['연인', '남/여사친', '꿀잼', '아이스브레이킹'],
             ),
             _buildCategoryCard(
               title: '라이어게임',
@@ -63,9 +67,10 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () {
                 // 게임 선택 화면으로 이동
                 Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => LiarGameScreen(),
+                  builder: (context) => const LiarGameScreen(),
                 ));
               },
+              hashTags: ['심리', '모임용게임', '친해지기', '꿀잼'],
             ),
           ],
         ),
@@ -78,6 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
     required String imagePath,
     required Color color,
     required VoidCallback onTap,
+    required List<String> hashTags,
   }) {
     // 화면의 너비에 따라 이미지 크기를 결정
     double screenWidth = MediaQuery.of(context).size.width;
@@ -92,26 +98,47 @@ class _HomeScreenState extends State<HomeScreen> {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Stack(
           children: <Widget>[
-            SizedBox(
-              height: imageHeight, // 동적으로 계산된 이미지 높이
-              child: Image.asset(
-                imagePath,
-                fit: BoxFit.contain,
+            Center(
+              child: SizedBox(
+                height: imageHeight, // 동적으로 계산된 이미지 높이
+                child: Image.asset(
+                  imagePath,
+                  fit: BoxFit.contain,
+                ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 16.0,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'HamChorong',
+            Positioned(
+              top: 8.0,
+              left: 8.0,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 18.0,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
+              ),
+            ),
+            Positioned(
+              bottom: 8.0,
+              right: 8.0,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: hashTags
+                    .map((tag) => Text(
+                          '#$tag',
+                          style: const TextStyle(
+                            color: Color(0xffF5988D),
+                            fontSize: 12.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ))
+                    .toList(),
               ),
             ),
           ],
