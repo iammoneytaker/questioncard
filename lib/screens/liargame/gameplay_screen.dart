@@ -28,6 +28,8 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
   final Color backgroundColor = const Color(0xfffffff0);
   final Color appBarColor = const Color(0xff375A7F); // AppBar 색상 변경
 
+  // TODO: 광고 중간에 동영상 닫기 버튼 누르면 광고 로드 중입니다 라는 팝업이 계속 뜨는 이슈가 있음.
+
   List<String> words = [];
   List<String> playedWords = [];
   int currentPlayer = 0;
@@ -458,6 +460,15 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
   }
 
   void showRewardFullBanner(BuildContext context, Function callback) async {
+    bool isCallbackCalled = false; // 콜백 호출 여부를 추적하는 플래그
+
+    void safeCallback() {
+      if (!isCallbackCalled) {
+        isCallbackCalled = true;
+        callback();
+      }
+    }
+
     await RewardedInterstitialAd.load(
       adUnitId: REWARD_INTERSTRITIAL_ADID,
       request: const AdRequest(),
@@ -465,23 +476,25 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
           RewardedInterstitialAdLoadCallback(onAdLoaded: (ad) {
         ad.fullScreenContentCallback = FullScreenContentCallback(
           onAdDismissedFullScreenContent: (RewardedInterstitialAd ad) {
-            print('1');
+            print('Ad dismissed.');
             ad.dispose();
+            safeCallback();
           },
           onAdFailedToShowFullScreenContent:
               (RewardedInterstitialAd ad, AdError error) {
-            print('2');
+            print('Ad failed to show.');
             ad.dispose();
+            safeCallback(); // 추가적인 콜백 로직이 있다면 여기서 호출합니다.
           },
         );
 
         ad.show(onUserEarnedReward: (ad, reward) {
-          print('3');
-          callback(); // 광고 시청 보상 후 초기화 콜백 호출
+          print('Reward earned.');
+          safeCallback(); // 광고 시청 보상 후 초기화 콜백 호출
         });
-      }, onAdFailedToLoad: (_) {
-        print(_);
-        callback(); // 광고 로드 실패 시 초기화 콜백 호출
+      }, onAdFailedToLoad: (error) {
+        print('Ad failed to load: $error');
+        safeCallback(); // 광고 로드 실패 시 초기화 콜백 호출
       }),
     );
   }

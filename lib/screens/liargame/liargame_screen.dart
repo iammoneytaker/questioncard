@@ -9,21 +9,14 @@ import 'gameplay_screen.dart';
 class LiarGameScreen extends StatelessWidget {
   const LiarGameScreen({Key? key}) : super(key: key);
   final Color primaryColor = const Color(0xffF5988D); // AppBar 색상
-  final Color cardBackgroundColor = const Color(0xff343541); // 카드 배경색
   final Color appBarColor = const Color(0xff375A7F); // AppBar 색상 변경
-
-  // 라이어게임 카테고리별 데이터 구현 안되어 있음.
-  // 라이어게임 카테고리별 데이터 가져와서 랜덤으로 보여주는 것 구현 안되어있음
-
-  // TODO: 카테고리에 데이터만 꾸겨 넣으면 됌.
-  // TODO: 인물퀴즈, 노래 맞추기
 
   @override
   Widget build(BuildContext context) {
     // 카테고리 리스트
 
     return Scaffold(
-      backgroundColor: const Color(0xff2f2f2f), // 배경색
+      backgroundColor: const Color(0xfffffff0), // 배경색
       appBar: AppBar(
         title: const Text(
           '라이어 게임',
@@ -31,10 +24,9 @@ class LiarGameScreen extends StatelessWidget {
             fontSize: 20.0, // AppBar 타이틀 크기 변경
             color: Colors.white,
             fontWeight: FontWeight.bold,
-            fontFamily: 'HamChorong',
           ),
         ),
-        backgroundColor: appBarColor, // AppBar 색상 변경
+        backgroundColor: primaryColor, // AppBar 색상 변경
       ),
       body: GridView.builder(
         padding: const EdgeInsets.all(8),
@@ -63,10 +55,10 @@ class LiarGameScreen extends StatelessWidget {
     required VoidCallback onTap,
   }) {
     return Card(
-      color: cardBackgroundColor, // 카드 배경색 변경
+      // color: cardBackgroundColor, // 카드 배경색 변경
       elevation: 8.0,
       shape: RoundedRectangleBorder(
-        side: const BorderSide(color: Colors.white, width: 2.0),
+        side: BorderSide(color: primaryColor, width: 2.0),
         borderRadius: BorderRadius.circular(16.0),
       ),
       child: InkWell(
@@ -79,8 +71,7 @@ class LiarGameScreen extends StatelessWidget {
             style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20, // 텍스트 크기 변경
-              color: Colors.white,
-              fontFamily: 'HamChorong',
+              color: Colors.black,
             ),
           ),
         ),
@@ -106,12 +97,12 @@ class LiarGameScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    const Text(
+                    Text(
                       '게임을 시작하겠습니까?',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        fontFamily: 'HamChorong',
+                        color: primaryColor,
                       ),
                     ),
                     IconButton(
@@ -129,7 +120,6 @@ class LiarGameScreen extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          fontFamily: 'HamChorong',
                         ),
                       ),
                     ),
@@ -143,21 +133,23 @@ class LiarGameScreen extends StatelessWidget {
                       '참여 인원: ${gameSettings.numberOfPlayers}명',
                       style: const TextStyle(
                         fontSize: 20,
-                        fontFamily: 'HamChorong',
                       ),
                     ),
                     ElevatedButton(
                       style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(appBarColor),
+                        backgroundColor:
+                            MaterialStateProperty.all(primaryColor),
                         padding: MaterialStateProperty.all(
                             const EdgeInsets.symmetric(
                                 horizontal: 8, vertical: 4)),
                         textStyle: MaterialStateProperty.all(const TextStyle(
                           fontSize: 14,
-                          fontFamily: 'HamChorong',
                         )),
                       ),
-                      child: const Text('변경하기'),
+                      child: const Text('변경하기',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          )),
                       onPressed: () {
                         _changeNumberOfPlayers(context, gameSettings);
                       },
@@ -171,18 +163,18 @@ class LiarGameScreen extends StatelessWidget {
                       '모드 선택: ${gameSettings.mode}',
                       style: const TextStyle(
                         fontSize: 20,
-                        fontFamily: 'HamChorong',
                       ),
                     ),
                     ElevatedButton(
                       style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(appBarColor),
+                        backgroundColor:
+                            MaterialStateProperty.all(primaryColor),
                         padding: MaterialStateProperty.all(
                             const EdgeInsets.symmetric(
                                 horizontal: 8, vertical: 4)),
                         textStyle: MaterialStateProperty.all(const TextStyle(
                           fontSize: 14,
-                          fontFamily: 'HamChorong',
+                          fontWeight: FontWeight.bold,
                         )),
                       ),
                       child: const Text('변경하기'),
@@ -199,18 +191,18 @@ class LiarGameScreen extends StatelessWidget {
                       '라이어: ${gameSettings.numberOfLiars}명',
                       style: const TextStyle(
                         fontSize: 20,
-                        fontFamily: 'HamChorong',
                       ),
                     ),
                     ElevatedButton(
                       style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(appBarColor),
+                        backgroundColor:
+                            MaterialStateProperty.all(primaryColor),
                         padding: MaterialStateProperty.all(
                             const EdgeInsets.symmetric(
                                 horizontal: 8, vertical: 4)),
                         textStyle: MaterialStateProperty.all(const TextStyle(
                           fontSize: 14,
-                          fontFamily: 'HamChorong',
+                          fontWeight: FontWeight.bold,
                         )),
                       ),
                       child: const Text('변경하기'),
@@ -225,12 +217,12 @@ class LiarGameScreen extends StatelessWidget {
                   width: double.infinity, // 버튼을 모달의 너비에 맞게 설정
                   child: ElevatedButton(
                     style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(appBarColor),
+                      backgroundColor: MaterialStateProperty.all(primaryColor),
                       padding: MaterialStateProperty.all(
                           const EdgeInsets.symmetric(vertical: 12)),
                       textStyle: MaterialStateProperty.all(const TextStyle(
                         fontSize: 16,
-                        fontFamily: 'HamChorong',
+                        fontWeight: FontWeight.bold,
                       )),
                     ),
                     child: const Text('시작'),
