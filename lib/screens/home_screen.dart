@@ -72,6 +72,32 @@ class _HomeScreenState extends State<HomeScreen> {
               },
               hashTags: ['심리', '모임용게임', '친해지기', '꿀잼'],
             ),
+            _buildCategoryCard(
+              title: '인물퀴즈(개발중..)',
+              imagePath: 'assets/images/personquiz.png',
+              color: Colors.green,
+              onTap: () {
+                // 게임 선택 화면으로 이동
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const LiarGameScreen(),
+                ));
+              },
+              hashTags: ['줌인', '줌아웃', '맞추기', '꿀잼'],
+              isComplete: false,
+            ),
+            // FutureBuilder(
+            //   future: StorageService().getImageUrl('persongame/liargame.png'),
+            //   builder: (context, AsyncSnapshot<String> snapshot) {
+            //     if (snapshot.connectionState == ConnectionState.done &&
+            //         snapshot.hasData) {
+            //       return Image.network(snapshot.data!); // 이미지 표시
+            //     } else if (snapshot.hasError) {
+            //       return Text('Error: ${snapshot.error}'); // 에러 표시
+            //     } else {
+            //       return const CircularProgressIndicator(); // 로딩 중 표시
+            //     }
+            //   },
+            // ),
           ],
         ),
       ),
@@ -84,6 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
     required Color color,
     required VoidCallback onTap,
     required List<String> hashTags,
+    bool isComplete = true,
   }) {
     // 화면의 너비에 따라 이미지 크기를 결정
     double screenWidth = MediaQuery.of(context).size.width;
@@ -92,6 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Card(
       elevation: 8.0,
+      color: isComplete ? Colors.white : Colors.grey,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16.0),
       ),
