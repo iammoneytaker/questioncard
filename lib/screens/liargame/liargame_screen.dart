@@ -1,16 +1,42 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/category_data.dart';
 import '../../providers/gamesetting.dart';
 import 'gameplay_screen.dart';
 
-class LiarGameScreen extends StatelessWidget {
+class LiarGameScreen extends StatefulWidget {
   const LiarGameScreen({Key? key}) : super(key: key);
-  final Color primaryColor = const Color(0xffF5988D); // AppBar 색상
-  final Color appBarColor = const Color(0xff375A7F); // AppBar 색상 변경
 
+  @override
+  State<LiarGameScreen> createState() => _LiarGameScreenState();
+}
+
+class _LiarGameScreenState extends State<LiarGameScreen> {
+  final Color primaryColor = const Color(0xffF5988D);
+  // AppBar 색상
+  final Color appBarColor = const Color(0xff375A7F);
+
+  @override
+  void initState() {
+    super.initState();
+    // 세로 모드로 고정
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+  }
+
+  @override
+  void dispose() {
+    // 다른 화면에서는 모든 방향을 허용하도록 설정을 복원
+    SystemChrome.setPreferredOrientations(DeviceOrientation.values);
+    super.dispose();
+  }
+
+  // AppBar 색상 변경
   @override
   Widget build(BuildContext context) {
     // 카테고리 리스트
@@ -70,7 +96,7 @@ class LiarGameScreen extends StatelessWidget {
             textAlign: TextAlign.center,
             style: const TextStyle(
               fontWeight: FontWeight.bold,
-              fontSize: 20, // 텍스트 크기 변경
+              fontSize: 16, // 텍스트 크기 변경
               color: Colors.black,
             ),
           ),
@@ -270,7 +296,7 @@ class LiarGameScreen extends StatelessWidget {
       backgroundColor: Colors.transparent, // 모달의 배경을 투명하게 설정
       builder: (BuildContext context) {
         return FractionallySizedBox(
-          heightFactor: 0.5, // 모달의 높이를 화면 높이의 50%로 설정
+          heightFactor: 0.7, // 모달의 높이를 화면 높이의 50%로 설정
           child: Center(
             child: Container(
               width: MediaQuery.of(context).size.width *
