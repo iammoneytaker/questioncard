@@ -77,12 +77,25 @@ class _HomeScreenState extends State<HomeScreen> {
               imagePath: 'assets/images/personquiz.png',
               color: Colors.green,
               onTap: () {
-                // 게임 선택 화면으로 이동
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const LiarGameScreen(),
-                ));
+                // // 게임 선택 화면으로 이동
+                // Navigator.of(context).push(MaterialPageRoute(
+                //   builder: (context) => const LiarGameScreen(),
+                // ));
               },
-              hashTags: ['줌인', '줌아웃', '맞추기', '꿀잼'],
+              hashTags: ['줌인', '줌아웃', '맞추기', '순발력'],
+              isComplete: false,
+            ),
+            _buildCategoryCard(
+              title: '노래맞추기(개발중..)',
+              imagePath: 'assets/images/musicgame.png',
+              color: Colors.green,
+              onTap: () {
+                // // 게임 선택 화면으로 이동
+                // Navigator.of(context).push(MaterialPageRoute(
+                //   builder: (context) => const LiarGameScreen(),
+                // ));
+              },
+              hashTags: ['순발력', '유행', '트렌디', '꿀잼'],
               isComplete: false,
             ),
             // FutureBuilder(
