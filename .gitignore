@@ -42,3 +42,24 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+
+# Firebase related
+**/android/app/google-services.json
+**/ios/Runner/GoogleService-Info.plist
+
+# Environment variables and secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# API Keys and sensitive information
+**/lib/**/constants.dart  # If you store API keys here
+**/lib/**/config.dart     # If you have a config file with sensitive information
+
+# Personal sensitive information (add manually if needed)
+**/android/key.properties  # Contains API keys or other sensitive info for Android
+**/ios/Runner/GoogleService-Info.plist  # Firebase configuration file for iOS
+**/android/app/src/main/res/values/keys.xml  # Contains API keys or other sensitive info for Android
