@@ -146,7 +146,7 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
   void onCardPressed() {
     if (gameEnded) return;
     // 카드를 눌렀을 때 실행되는 로직
-    _pressTimer = Timer(const Duration(seconds: 1), showWord);
+    _pressTimer = Timer(const Duration(milliseconds: 400), showWord);
   }
 
   void onCardReleased() {
@@ -166,7 +166,7 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
     // 게임 시작 로직
     setState(() {
       isPressing = true; // 사용자가 카드를 누르고 있음을 나타냄
-      _timer = Timer(const Duration(seconds: 1), () {
+      _timer = Timer(const Duration(milliseconds: 400), () {
         // 2초 후에 실행될 로직
         setState(() {
           isPressing = false; // 2초가 지나면 누르고 있지 않은 상태로 변경
