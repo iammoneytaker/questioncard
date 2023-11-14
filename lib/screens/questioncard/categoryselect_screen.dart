@@ -61,6 +61,8 @@ class CategorySelectScreen extends StatelessWidget {
       // 가로 모드이거나 화면 너비가 600픽셀보다 큰 경우
       crossAxisCount = 3;
     }
+    // 아이패드 또는 큰 화면에서는 더 큰 글씨 크기를 사용
+    double tagFontSize = width > 600 ? 18.0 : 12.0;
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GridView.builder(
@@ -131,9 +133,9 @@ class CategorySelectScreen extends StatelessWidget {
                           .hashTags
                           .map((tag) => Text(
                                 '#$tag',
-                                style: const TextStyle(
-                                  color: Color(0xffF5988D),
-                                  fontSize: 12.0,
+                                style: TextStyle(
+                                  color: const Color(0xffF5988D),
+                                  fontSize: tagFontSize,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ))

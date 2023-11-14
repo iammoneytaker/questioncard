@@ -63,3 +63,7 @@ app.*.map.json
 **/android/key.properties  # Contains API keys or other sensitive info for Android
 **/ios/Runner/GoogleService-Info.plist  # Firebase configuration file for iOS
 **/android/app/src/main/res/values/keys.xml  # Contains API keys or other sensitive info for Android
+
+firebase.json
+firebaserc
+storage.rules

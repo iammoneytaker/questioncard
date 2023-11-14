@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:questioncard/screens/celebrityquiz/celebrityquiz_screen.dart';
 import 'package:questioncard/screens/questioncard/questioncard_screen.dart';
 import 'package:questioncard/screens/setting_screen.dart';
 
@@ -77,10 +78,10 @@ class _HomeScreenState extends State<HomeScreen> {
               imagePath: 'assets/images/personquiz.png',
               color: Colors.green,
               onTap: () {
-                // // 게임 선택 화면으로 이동
-                // Navigator.of(context).push(MaterialPageRoute(
-                //   builder: (context) => const LiarGameScreen(),
-                // ));
+                // 게임 선택 화면으로 이동
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const CelebrityQuizScreen(),
+                ));
               },
               hashTags: ['줌인', '줌아웃', '맞추기', '순발력'],
               isComplete: false,
@@ -130,6 +131,9 @@ class _HomeScreenState extends State<HomeScreen> {
     double cardHeight = screenWidth / 2 * 0.8; // 카드의 높이를 화면 너비의 절반의 80%로 설정
     double imageHeight = cardHeight * 0.6; // 이미지 높이를 카드 높이의 60%로 설정
 
+    // 아이패드 또는 큰 화면에서는 더 큰 글씨 크기를 사용
+    double tagFontSize = screenWidth > 600 ? 18.0 : 12.0;
+
     return Card(
       elevation: 8.0,
       color: isComplete ? Colors.white : Colors.grey,
@@ -173,9 +177,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: hashTags
                     .map((tag) => Text(
                           '#$tag',
-                          style: const TextStyle(
-                            color: Color(0xffF5988D),
-                            fontSize: 12.0,
+                          style: TextStyle(
+                            color: const Color(0xffF5988D),
+                            fontSize: tagFontSize,
                             fontWeight: FontWeight.bold,
                           ),
                         ))

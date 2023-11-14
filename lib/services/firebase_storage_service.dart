@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class StorageService {
@@ -14,5 +15,16 @@ class StorageService {
       print(e);
       return Future.error('Image load failed: ${e.code}');
     }
+  }
+}
+
+class ApiService {
+  // 리스트 추출.
+  Future<List<String>> getCelebrityList() async {
+    final celebritiesRef = FirebaseFirestore.instance.collection('celebrity');
+    final querySnapshot = await celebritiesRef.get();
+    final celebrityList = List<String>.from(
+        querySnapshot.docs.first.data()['celebrities'] as List<dynamic>);
+    return celebrityList;
   }
 }
