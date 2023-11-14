@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:questioncard/screens/celebrityquiz/celebrityquiz_screen.dart';
+import 'package:questioncard/screens/celebrityquiz/celebrityquiz_category_screen.dart';
 import 'package:questioncard/screens/questioncard/questioncard_screen.dart';
 import 'package:questioncard/screens/setting_screen.dart';
 
@@ -80,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () {
                 // 게임 선택 화면으로 이동
                 Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const CelebrityQuizScreen(),
+                  builder: (context) => const CelebrityCategoryScreen(),
                 ));
               },
               hashTags: ['줌인', '줌아웃', '맞추기', '순발력'],

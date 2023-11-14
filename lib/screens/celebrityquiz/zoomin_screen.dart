@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class CelebrityQuizScreen extends StatefulWidget {
-  const CelebrityQuizScreen({super.key});
+class ZoomInScreen extends StatefulWidget {
+  const ZoomInScreen({super.key});
 
   @override
-  _CelebrityQuizScreenState createState() => _CelebrityQuizScreenState();
+  _ZoomInScreenState createState() => _ZoomInScreenState();
 }
 
-class _CelebrityQuizScreenState extends State<CelebrityQuizScreen> {
+class _ZoomInScreenState extends State<ZoomInScreen> {
   double _scale = 10.0; // 초기 확대 비율
   final List<double> _scaleHistory = []; // 줌 레벨의 이력을 저장하는 스택
   int _currentStep = 1; // 현재 단계
@@ -69,33 +69,20 @@ class _CelebrityQuizScreenState extends State<CelebrityQuizScreen> {
                 border: Border.all(color: Colors.blueAccent, width: 3),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: GestureDetector(
-                onTap: _zoomOut,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Transform.scale(
-                    scale: _scale,
-                    alignment: Alignment.center,
-                    child: Image.asset('persongame/idol/강호동.png',
-                        fit: BoxFit.cover),
-                  ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Transform.scale(
+                  alignment: Alignment.center,
+                  scale: _scale,
+                  child: Image.asset(
+                      'assets/images/persongame/comedian/강호동.png',
+                      fit: BoxFit.cover),
                 ),
+                // Image.asset('persongame/idol/강호동.png', fit: BoxFit.cover),
               ),
             ),
           ),
-          // FutureBuilder(
-          //   future: StorageService().getImageUrl('persongame/liargame.png'),
-          //   builder: (context, AsyncSnapshot<String> snapshot) {
-          //     if (snapshot.connectionState == ConnectionState.done &&
-          //         snapshot.hasData) {
-          //       return Image.network(snapshot.data!); // 이미지 표시
-          //     } else if (snapshot.hasError) {
-          //       return Text('Error: ${snapshot.error}'); // 에러 표시
-          //     } else {
-          //       return const CircularProgressIndicator(); // 로딩 중 표시
-          //     }
-          //   },
-          // ),
+
           const SizedBox(height: 20), // 버튼과의 간격
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,

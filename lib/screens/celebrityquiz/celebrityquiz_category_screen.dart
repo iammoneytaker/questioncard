@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:questioncard/screens/celebrityquiz/zoomin_screen.dart';
+import 'package:questioncard/screens/celebrityquiz/zoomout_screen.dart';
 
 class CelebrityCategoryScreen extends StatefulWidget {
   const CelebrityCategoryScreen({super.key});
@@ -19,7 +21,7 @@ class _CelebrityCategoryScreenState extends State<CelebrityCategoryScreen> {
       backgroundColor: backgroundColor,
       appBar: AppBar(
         title: const Text(
-          '어색할 때',
+          '인물퀴즈',
           style: TextStyle(
             fontSize: 20.0,
             color: Colors.white,
@@ -38,8 +40,32 @@ class _CelebrityCategoryScreenState extends State<CelebrityCategoryScreen> {
           mainAxisSpacing: 10, // 카드 간의 세로 간격
           children: <Widget>[
             _buildCategoryCard(
+              title: '줌인 GAME',
+              imagePath: 'assets/images/zoomout.png',
+              color: Colors.green,
+              onTap: () {
+                // 줌인게임 화면으로 이동
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const ZoomInScreen(),
+                ));
+              },
+              hashTags: ['ZOOM-IN', '시력', '연예인'],
+            ),
+            _buildCategoryCard(
+              title: '줌아웃 GAME',
+              imagePath: 'assets/images/zoomout.png',
+              color: Colors.green,
+              onTap: () {
+                // 게임 선택 화면으로 이동
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const ZoomOutScreen(),
+                ));
+              },
+              hashTags: ['ZOOM-OUT', '재치', '연예인'],
+            ),
+            _buildCategoryCard(
               title: '스피드 인물 퀴즈',
-              imagePath: 'assets/images/questionlogo.png',
+              imagePath: 'assets/images/speedquiz.png',
               color: Colors.blue,
               onTap: () {
                 // 질문 카드 화면으로 이동
@@ -49,32 +75,7 @@ class _CelebrityCategoryScreenState extends State<CelebrityCategoryScreen> {
                 //     // )
                 //     );
               },
-              hashTags: ['연인', '남/여사친', '꿀잼', '아이스브레이킹'],
-            ),
-            _buildCategoryCard(
-              title: 'ZOOM-IN GAME',
-              imagePath: 'assets/images/liargame.png',
-              color: Colors.green,
-              onTap: () {
-                // 게임 선택 화면으로 이동
-                // Navigator.of(context).push(MaterialPageRoute(
-                //   builder: (context) => const LiarGameScreen(),
-                // ));
-              },
-              hashTags: ['심리', '모임용게임', '친해지기', '꿀잼'],
-            ),
-            _buildCategoryCard(
-              title: 'ZOOM-OUT GAME',
-              imagePath: 'assets/images/personquiz.png',
-              color: Colors.green,
-              onTap: () {
-                // // 게임 선택 화면으로 이동
-                // Navigator.of(context).push(MaterialPageRoute(
-                //   builder: (context) => const CelebrityQuizScreen(),
-                // ));
-              },
-              hashTags: ['줌인', '줌아웃', '맞추기', '순발력'],
-              isComplete: false,
+              hashTags: ['순발력', '아이돌', '배우', '코미디언'],
             ),
           ],
         ),
