@@ -1,20 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:questioncard/screens/celebrityquiz/celebrityquiz_screen.dart';
-import 'package:questioncard/screens/questioncard/questioncard_screen.dart';
-import 'package:questioncard/screens/setting_screen.dart';
 
-import '../widgets/bottompage.dart';
-import 'liargame/liargame_screen.dart';
-
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class CelebrityCategoryScreen extends StatefulWidget {
+  const CelebrityCategoryScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<CelebrityCategoryScreen> createState() =>
+      _CelebrityCategoryScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _CelebrityCategoryScreenState extends State<CelebrityCategoryScreen> {
   final Color primaryColor = const Color(0xffF5988D);
+
   final Color backgroundColor = const Color(0xfffffff0);
 
   @override
@@ -32,14 +28,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         backgroundColor: primaryColor,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings, color: Colors.white),
-            onPressed: () {
-              openPageFromBottom(context, const SettingScreen());
-            },
-          ),
-        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
@@ -50,53 +38,42 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisSpacing: 10, // 카드 간의 세로 간격
           children: <Widget>[
             _buildCategoryCard(
-              title: '질문 카드',
+              title: '스피드 인물 퀴즈',
               imagePath: 'assets/images/questionlogo.png',
               color: Colors.blue,
               onTap: () {
                 // 질문 카드 화면으로 이동
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const QuestionCardScreen(),
-                ));
+                // Navigator.of(context).push(
+                //     // MaterialPageRoute(
+                //     // builder: (context) => const QuestionCardScreen(),
+                //     // )
+                //     );
               },
               hashTags: ['연인', '남/여사친', '꿀잼', '아이스브레이킹'],
             ),
             _buildCategoryCard(
-              title: '라이어게임',
+              title: 'ZOOM-IN GAME',
               imagePath: 'assets/images/liargame.png',
               color: Colors.green,
               onTap: () {
                 // 게임 선택 화면으로 이동
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const LiarGameScreen(),
-                ));
-              },
-              hashTags: ['심리', '모임용게임', '친해지기', '꿀잼'],
-            ),
-            _buildCategoryCard(
-              title: '인물퀴즈(개발중..)',
-              imagePath: 'assets/images/personquiz.png',
-              color: Colors.green,
-              onTap: () {
-                // 게임 선택 화면으로 이동
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const CelebrityQuizScreen(),
-                ));
-              },
-              hashTags: ['줌인', '줌아웃', '맞추기', '순발력'],
-              isComplete: false,
-            ),
-            _buildCategoryCard(
-              title: '노래맞추기(개발중..)',
-              imagePath: 'assets/images/musicgame.png',
-              color: Colors.green,
-              onTap: () {
-                // // 게임 선택 화면으로 이동
                 // Navigator.of(context).push(MaterialPageRoute(
                 //   builder: (context) => const LiarGameScreen(),
                 // ));
               },
-              hashTags: ['순발력', '유행', '트렌디', '꿀잼'],
+              hashTags: ['심리', '모임용게임', '친해지기', '꿀잼'],
+            ),
+            _buildCategoryCard(
+              title: 'ZOOM-OUT GAME',
+              imagePath: 'assets/images/personquiz.png',
+              color: Colors.green,
+              onTap: () {
+                // // 게임 선택 화면으로 이동
+                // Navigator.of(context).push(MaterialPageRoute(
+                //   builder: (context) => const CelebrityQuizScreen(),
+                // ));
+              },
+              hashTags: ['줌인', '줌아웃', '맞추기', '순발력'],
               isComplete: false,
             ),
           ],

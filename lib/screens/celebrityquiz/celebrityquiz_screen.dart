@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:questioncard/services/firebase_storage_service.dart';
 
 class CelebrityQuizScreen extends StatefulWidget {
   const CelebrityQuizScreen({super.key});
@@ -36,17 +35,6 @@ class _CelebrityQuizScreenState extends State<CelebrityQuizScreen> {
   @override
   void initState() {
     super.initState();
-    _loadCelebrity(); // 비동기 함수 호출
-  }
-
-  Future<void> _loadCelebrity() async {
-    try {
-      final celebrityList = await ApiService().getCelebrityList();
-      print(celebrityList);
-      // TODO: 여기에서 추가적인 상태 업데이트 로직을 구현합니다.
-    } catch (e) {
-      print('Error loading celebrity list: $e');
-    }
   }
 
   @override
@@ -88,13 +76,26 @@ class _CelebrityQuizScreenState extends State<CelebrityQuizScreen> {
                   child: Transform.scale(
                     scale: _scale,
                     alignment: Alignment.center,
-                    child:
-                        Image.asset('assets/images/강호동.png', fit: BoxFit.cover),
+                    child: Image.asset('persongame/idol/강호동.png',
+                        fit: BoxFit.cover),
                   ),
                 ),
               ),
             ),
           ),
+          // FutureBuilder(
+          //   future: StorageService().getImageUrl('persongame/liargame.png'),
+          //   builder: (context, AsyncSnapshot<String> snapshot) {
+          //     if (snapshot.connectionState == ConnectionState.done &&
+          //         snapshot.hasData) {
+          //       return Image.network(snapshot.data!); // 이미지 표시
+          //     } else if (snapshot.hasError) {
+          //       return Text('Error: ${snapshot.error}'); // 에러 표시
+          //     } else {
+          //       return const CircularProgressIndicator(); // 로딩 중 표시
+          //     }
+          //   },
+          // ),
           const SizedBox(height: 20), // 버튼과의 간격
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
