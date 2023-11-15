@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/category_data.dart';
@@ -22,17 +21,10 @@ class _LiarGameScreenState extends State<LiarGameScreen> {
   @override
   void initState() {
     super.initState();
-    // 세로 모드로 고정
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
   }
 
   @override
   void dispose() {
-    // 다른 화면에서는 모든 방향을 허용하도록 설정을 복원
-    SystemChrome.setPreferredOrientations(DeviceOrientation.values);
     super.dispose();
   }
 

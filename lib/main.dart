@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:questioncard/providers/gamesetting.dart';
@@ -10,6 +11,11 @@ import 'screens/intro_screen.dart'; // IntroScreen 위젯이 정의된 파일을
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // 세로 모드 고정
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
   SharedPreferences prefs = await SharedPreferences.getInstance();
   bool introShown = prefs.getBool('introShown') ?? false;
 

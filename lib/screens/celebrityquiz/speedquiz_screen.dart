@@ -43,10 +43,6 @@ class _SpeedQuizScreenState extends State<SpeedQuizScreen> {
   @override
   void initState() {
     super.initState();
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
     _loadFilteredCelebrityList();
   }
 
@@ -147,7 +143,6 @@ class _SpeedQuizScreenState extends State<SpeedQuizScreen> {
   void dispose() {
     _timer?.cancel(); // 타이머 취소
     _imageTimer?.cancel(); // 이미지 타이머 취소
-    SystemChrome.setPreferredOrientations(DeviceOrientation.values);
     super.dispose();
   }
 

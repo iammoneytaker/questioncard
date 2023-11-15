@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -42,10 +41,6 @@ class _ZoomInScreenState extends State<ZoomInScreen> {
   @override
   void initState() {
     super.initState();
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
     _scale = _initialScale;
     _loadFilteredCelebrityList().then((_) {
       // 필터링된 리스트 로딩 후 첫 번째 아이템 처리
@@ -58,7 +53,6 @@ class _ZoomInScreenState extends State<ZoomInScreen> {
 
   @override
   void dispose() {
-    SystemChrome.setPreferredOrientations(DeviceOrientation.values);
     super.dispose();
   }
 
@@ -303,7 +297,7 @@ class _ZoomInScreenState extends State<ZoomInScreen> {
           else if (_filteredCelebrityList.isEmpty)
             // 필터링된 리스트가 비어있을 경우 리셋 버튼을 표시합니다.
             SizedBox(
-              height: MediaQuery.of(context).size.height * 0.7,
+              height: MediaQuery.of(context).size.height * 0.8,
               child: Card(
                 elevation: 5,
                 shape: RoundedRectangleBorder(
@@ -348,7 +342,7 @@ class _ZoomInScreenState extends State<ZoomInScreen> {
             )
           else
             SizedBox(
-              height: MediaQuery.of(context).size.height * 0.7,
+              height: MediaQuery.of(context).size.height * 0.8,
               child: Swiper(
                 onIndexChanged: _onIndexChanged,
                 itemCount: _filteredCelebrityList.length + 1,
@@ -358,7 +352,7 @@ class _ZoomInScreenState extends State<ZoomInScreen> {
                   if (index == _filteredCelebrityList.length) {
                     // 여기서 '모든 이미지를 보셨습니다.' 카드를 반환합니다.
                     return SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.7,
+                      height: MediaQuery.of(context).size.height * 0.8,
                       child: Card(
                         elevation: 5,
                         shape: RoundedRectangleBorder(

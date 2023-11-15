@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../data/ad_data.dart';
@@ -52,11 +51,6 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
   @override
   void initState() {
     super.initState();
-    // 세로 모드로 고정
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
     initializeGame();
     _loadBannerAd();
   }
@@ -313,8 +307,6 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
     _timer?.cancel();
     _pressTimer?.cancel();
     _bannerAd?.dispose();
-    // 다른 화면에서는 모든 방향을 허용하도록 설정을 복원
-    SystemChrome.setPreferredOrientations(DeviceOrientation.values);
     super.dispose();
   }
 
