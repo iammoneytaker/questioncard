@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:questioncard/screens/celebrityquiz/speedquiz_screen.dart';
 import 'package:questioncard/screens/celebrityquiz/zoomin_screen.dart';
 import 'package:questioncard/screens/celebrityquiz/zoomout_screen.dart';
 import '../../data/celebrityquiz_data.dart';
@@ -35,7 +36,7 @@ class _GameCategoryScreenState extends State<GameCategoryScreen> {
         ));
       case GameCategory.speed:
         return Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => ZoomOutScreen(category: selectCategory!),
+          builder: (context) => SpeedQuizScreen(category: selectCategory!),
         ));
       default:
         return Navigator.of(context).push(MaterialPageRoute(

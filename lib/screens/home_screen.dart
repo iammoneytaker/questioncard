@@ -84,6 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ));
               },
               hashTags: ['줌인', '줌아웃', '경쟁', '순발력'],
+              isNew: true,
             ),
             _buildCategoryCard(
               title: '노래맞추기(개발중..)',
@@ -111,6 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
     required VoidCallback onTap,
     required List<String> hashTags,
     bool isComplete = true,
+    bool isNew = false,
   }) {
     // 화면의 너비에 따라 이미지 크기를 결정
     double screenWidth = MediaQuery.of(context).size.width;
@@ -155,6 +157,22 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
+            if (isNew)
+              const Positioned(
+                top: 8.0,
+                right: 8.0,
+                child: Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    'NEW!!',
+                    style: TextStyle(
+                      fontSize: 12.0,
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
             Positioned(
               bottom: 8.0,
               right: 8.0,
