@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:questioncard/screens/celebrityquiz/zoomin_screen.dart';
-import 'package:questioncard/screens/celebrityquiz/zoomout_screen.dart';
+import 'package:questioncard/data/celebrityquiz_data.dart';
+import 'package:questioncard/screens/celebrityquiz/gamecategory_screen.dart';
 
 class CelebrityCategoryScreen extends StatefulWidget {
   const CelebrityCategoryScreen({super.key});
@@ -21,7 +21,7 @@ class _CelebrityCategoryScreenState extends State<CelebrityCategoryScreen> {
       backgroundColor: backgroundColor,
       appBar: AppBar(
         title: const Text(
-          '인물퀴즈',
+          '게임유형선택',
           style: TextStyle(
             fontSize: 20.0,
             color: Colors.white,
@@ -46,8 +46,8 @@ class _CelebrityCategoryScreenState extends State<CelebrityCategoryScreen> {
               onTap: () {
                 // 줌인게임 화면으로 이동
                 Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const ZoomInScreen(
-                    category: 'actor',
+                  builder: (context) => const GameCategoryScreen(
+                    gameUnit: GameCategory.zoomin,
                   ),
                 ));
               },
@@ -60,8 +60,8 @@ class _CelebrityCategoryScreenState extends State<CelebrityCategoryScreen> {
               onTap: () {
                 // 게임 선택 화면으로 이동
                 Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const ZoomOutScreen(
-                    category: 'actor',
+                  builder: (context) => const GameCategoryScreen(
+                    gameUnit: GameCategory.zoomout,
                   ),
                 ));
               },
@@ -72,12 +72,11 @@ class _CelebrityCategoryScreenState extends State<CelebrityCategoryScreen> {
               imagePath: 'assets/images/speedquiz.png',
               color: Colors.blue,
               onTap: () {
-                // 질문 카드 화면으로 이동
-                // Navigator.of(context).push(
-                //     // MaterialPageRoute(
-                //     // builder: (context) => const QuestionCardScreen(),
-                //     // )
-                //     );
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const GameCategoryScreen(
+                    gameUnit: GameCategory.speed,
+                  ),
+                ));
               },
               hashTags: ['순발력', '아이돌', '배우', '코미디언'],
             ),

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -41,6 +42,10 @@ class _ZoomOutScreenState extends State<ZoomOutScreen> {
   @override
   void initState() {
     super.initState();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     _scale = _initialScale;
     _loadFilteredCelebrityList().then((_) {
       // 필터링된 리스트 로딩 후 첫 번째 아이템 처리
@@ -49,6 +54,12 @@ class _ZoomOutScreenState extends State<ZoomOutScreen> {
             _filteredCelebrityList.first.keys.first);
       }
     });
+  }
+
+  @override
+  void dispose() {
+    SystemChrome.setPreferredOrientations(DeviceOrientation.values);
+    super.dispose();
   }
 
   // 본 연예인들의 이름을 저장하는 메서드

@@ -74,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
               hashTags: ['심리', '모임용게임', '친해지기', '꿀잼'],
             ),
             _buildCategoryCard(
-              title: '인물퀴즈(개발중..)',
+              title: '인물퀴즈',
               imagePath: 'assets/images/personquiz.png',
               color: Colors.green,
               onTap: () {
@@ -83,8 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   builder: (context) => const CelebrityCategoryScreen(),
                 ));
               },
-              hashTags: ['줌인', '줌아웃', '맞추기', '순발력'],
-              isComplete: false,
+              hashTags: ['줌인', '줌아웃', '경쟁', '순발력'],
             ),
             _buildCategoryCard(
               title: '노래맞추기(개발중..)',
