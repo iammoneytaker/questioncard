@@ -298,7 +298,7 @@ class _ZoomOutScreenState extends State<ZoomOutScreen> {
           else if (_filteredCelebrityList.isEmpty)
             // 필터링된 리스트가 비어있을 경우 리셋 버튼을 표시합니다.
             SizedBox(
-              height: MediaQuery.of(context).size.height * 0.6,
+              height: MediaQuery.of(context).size.height * 0.7,
               child: Card(
                 elevation: 5,
                 shape: RoundedRectangleBorder(
@@ -343,7 +343,7 @@ class _ZoomOutScreenState extends State<ZoomOutScreen> {
             )
           else
             SizedBox(
-              height: MediaQuery.of(context).size.height * 0.6,
+              height: MediaQuery.of(context).size.height * 0.7,
               child: Swiper(
                 onIndexChanged: _onIndexChanged,
                 itemCount: _filteredCelebrityList.length + 1,
@@ -353,7 +353,7 @@ class _ZoomOutScreenState extends State<ZoomOutScreen> {
                   if (index == _filteredCelebrityList.length) {
                     // 여기서 '모든 이미지를 보셨습니다.' 카드를 반환합니다.
                     return SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.6,
+                      height: MediaQuery.of(context).size.height * 0.7,
                       child: Card(
                         elevation: 5,
                         shape: RoundedRectangleBorder(
