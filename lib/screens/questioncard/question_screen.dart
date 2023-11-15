@@ -143,7 +143,8 @@ class _QuestionScreenState extends State<QuestionScreen> {
         .expand((questionModel) => questionModel.questions)
         .where((question) => !viewedQuestions
             .contains("${widget.categoryCode}:${question.questionNo}"))
-        .toList();
+        .toList()
+      ..shuffle();
 
     // 모든 질문을 확인한 경우
     if (filteredQuestions.isEmpty) {
@@ -182,7 +183,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
   // 봤을때 3초 뒤에 본 것으로 체크해서 다음부터 안나오게 처리.
   _startViewedTimer() {
     _viewedTimer?.cancel(); // 이전 타이머가 있으면 취소
-    _viewedTimer = Timer(const Duration(seconds: 3), () {
+    _viewedTimer = Timer(const Duration(seconds: 1), () {
       _markAsViewed(questions[_currentIndex]);
     });
   }

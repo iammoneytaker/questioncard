@@ -386,7 +386,7 @@ List<QuestionModel> questionList = [
           text: "밥 먹으러 갔는데 배 안고프다고 앞에서 내가 먹는걸 구경하는 친구 어때?", questionNo: 14),
       Question(text: "주사가 뭐야?", questionNo: 15),
       Question(text: "돈보다 중요한 것이 있다고 생각해?", questionNo: 16),
-      Question(text: "돈이 모든 것을 결정한다고 생각해?", questionNo: 17),
+      Question(text: "돈이 연애에서 모든 것을 결정한다고 생각해?", questionNo: 17),
       Question(text: "애인과 사귀는 중에 다른사람에게 설렌 적이 있어?", questionNo: 18),
       Question(text: "애인이 어른에게 예의없게 행동하면 정 떨어지는가?", questionNo: 19),
       Question(text: "애인과 다른 입맛 맞춰줄 수 있어?", questionNo: 20),

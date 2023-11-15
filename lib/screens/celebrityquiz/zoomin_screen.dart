@@ -358,7 +358,7 @@ class _ZoomInScreenState extends State<ZoomInScreen> {
                   if (index == _filteredCelebrityList.length) {
                     // 여기서 '모든 이미지를 보셨습니다.' 카드를 반환합니다.
                     return SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.6,
+                      // height: MediaQuery.of(context).size.height * 0.6,
                       child: Card(
                         elevation: 5,
                         shape: RoundedRectangleBorder(
@@ -403,7 +403,6 @@ class _ZoomInScreenState extends State<ZoomInScreen> {
                     );
                   }
                   final celebrity = _filteredCelebrityList[index];
-                  final celebrityName = celebrity.keys.first;
                   final celebrityFileName = celebrity.values.first;
                   return Card(
                     elevation: 5,
