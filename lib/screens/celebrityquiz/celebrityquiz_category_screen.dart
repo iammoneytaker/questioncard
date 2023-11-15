@@ -46,7 +46,9 @@ class _CelebrityCategoryScreenState extends State<CelebrityCategoryScreen> {
               onTap: () {
                 // 줌인게임 화면으로 이동
                 Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const ZoomInScreen(),
+                  builder: (context) => const ZoomInScreen(
+                    category: 'actor',
+                  ),
                 ));
               },
               hashTags: ['ZOOM-IN', '시력', '연예인'],
@@ -58,7 +60,9 @@ class _CelebrityCategoryScreenState extends State<CelebrityCategoryScreen> {
               onTap: () {
                 // 게임 선택 화면으로 이동
                 Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const ZoomOutScreen(),
+                  builder: (context) => const ZoomOutScreen(
+                    category: 'actor',
+                  ),
                 ));
               },
               hashTags: ['ZOOM-OUT', '재치', '연예인'],

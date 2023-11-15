@@ -64,7 +64,7 @@ dev_dependencies:
 flutter:
   assets:
     - 'assets/images/'
-    - 'assets/images/persongame'
+    - 'assets/images/persongame/'
     - 'assets/images/persongame/idol/'
     - 'assets/images/persongame/actor/'
     - 'assets/images/persongame/comedian/'
