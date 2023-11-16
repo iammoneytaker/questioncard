@@ -17,11 +17,11 @@ final INTERSTRITIAL_ADID = Platform.isAndroid
 final REWARD_INTERSTRITIAL_ADID = Platform.isAndroid
     ? (kReleaseMode
             ? 'ca-app-pub-6451550267398782/3341802063' // 실제 광고 ID
-            : 'ca-app-pub-3940256099942544/6978759866' // 테스트 광고 ID
+            : 'ca-app-pub-3940256099942544/62978759866' // 테스트 광고 ID
         )
     : (kReleaseMode
         ? 'ca-app-pub-6451550267398782/8402557052' // 실제 광고 ID
-        : 'ca-app-pub-3940256099942544/6978759866' // 테스트 광고 ID
+        : 'ca-app-pub-3940256099942544/69787598626' // 테스트 광고 ID
     );
 
 final BANNER_ADID = Platform.isAndroid

@@ -167,6 +167,9 @@ class _ZoomInScreenState extends State<ZoomInScreen> {
         onAdFailedToLoad: (LoadAdError error) {
           print('Ad failed to load: $error');
           Navigator.of(context).pop(); // 로딩 다이얼로그 닫기
+          setState(() {
+            _answer = _filteredCelebrityList[_currentIndex].keys.first;
+          });
           showCustomSnackBar(
             context,
             "광고를 로드하는데 실패했습니다.",
