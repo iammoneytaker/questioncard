@@ -40,14 +40,57 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      routes: {
-        '/home': (context) => const HomeScreen(),
-        // ... 다른 라우트 정의
-      },
-      title: 'Question App',
-      home: introShown ? const HomeScreen() : const IntroScreen(),
-    );
+    return OrientationBuilder(builder: (context, orientation) {
+      return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        routes: {
+          '/home': (context) => const HomeScreen(),
+          // ... 다른 라우트 정의
+        },
+        title: 'Question App',
+        home: OrientationAwareWidget(introShown: introShown),
+      );
+    });
+  }
+}
+
+class OrientationAwareWidget extends StatelessWidget {
+  final bool introShown;
+
+  const OrientationAwareWidget({required this.introShown, Key? key})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return OrientationBuilder(builder: (context, orientation) {
+      if (orientation == Orientation.landscape) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text('세로 모드로 전환해주세요'),
+                content: const Text('이 앱은 세로 모드에서 잘 작동합니다.'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      SystemChrome.setPreferredOrientations([
+                        DeviceOrientation.portraitUp,
+                        DeviceOrientation.portraitDown,
+                      ]);
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('확인'),
+                  ),
+                ],
+              );
+            },
+          );
+        });
+      }
+      // Returning the actual screen widget based on the introShown flag.
+      return introShown ? const HomeScreen() : const IntroScreen();
+    });
   }
 }
