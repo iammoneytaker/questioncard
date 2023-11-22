@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -102,7 +101,7 @@ class _SpeedQuizScreenState extends State<SpeedQuizScreen> {
   void _startTimer() {
     _timeLeft = 3;
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_timeLeft > 0) {
+      if (_timeLeft > 1) {
         setState(() => _timeLeft--);
       } else {
         _timer?.cancel();
