@@ -11,5 +11,5 @@ def romanize_filename(directory):
             print(f"Renamed {filename} to {romanized_name}")
 
 # 사용 예시
-directory_path = 'assets/images/persongame/idol'  # 이미지가 있는 디렉토리 경로
+directory_path = 'assets/images/persongame/rapper'  # 이미지가 있는 디렉토리 경로
 romanize_filename(directory_path)

@@ -97,6 +97,15 @@ class _GameCategoryScreenState extends State<GameCategoryScreen> {
               hashTags: ['웃김', '그냥웃김', '행복'],
             ),
             _buildCategoryCard(
+              title: '래퍼',
+              imagePath: 'assets/images/hiphop.png',
+              color: Colors.green,
+              onTap: () {
+                _onTap('rapper');
+              },
+              hashTags: ['간지', '라임', '펀치라인킹'],
+            ),
+            _buildCategoryCard(
               title: '랜덤',
               imagePath: 'assets/images/speedquiz.png',
               color: Colors.blue,

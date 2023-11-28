@@ -68,6 +68,7 @@ flutter:
     - 'assets/images/persongame/idol/'
     - 'assets/images/persongame/actor/'
     - 'assets/images/persongame/comedian/'
+    - 'assets/images/persongame/rapper/'
     - 'assets/images/persongame/random/'
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
