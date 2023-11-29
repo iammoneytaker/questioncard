@@ -516,6 +516,9 @@ Map<String, List<Map<String, String>>> celebrityquizData = {
     {"베이식": "beisig"},
     {"김하온": "gimhaon"},
     {"비와이": "biwai"},
+    {"타블로": "tabeulro"},
+    {"신스": "sinseu"},
+    {"ek": "ek"}
   ],
   'random': [
     {"이민기": "imingi"},
