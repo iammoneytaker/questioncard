@@ -515,7 +515,7 @@ Map<String, List<Map<String, String>>> celebrityquizData = {
     {"그레이": "geurei"},
     {"베이식": "beisig"},
     {"김하온": "gimhaon"},
-    {"비와이": "biwai"},
+    {"비와이": "biwzai"},
     {"타블로": "tabeulro"},
     {"신스": "sinseu"},
     {"ek": "ek"}
@@ -1031,6 +1031,9 @@ Map<String, List<Map<String, String>>> celebrityquizData = {
     {"베이식": "beisig"},
     {"김하온": "gimhaon"},
     {"비와이": "biwai"},
+    {"타블로": "tabeulro"},
+    {"신스": "sinseu"},
+    {"ek": "ek"}
   ],
 };
 
