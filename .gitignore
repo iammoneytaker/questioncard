@@ -43,10 +43,7 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-
-# Firebase related
-**/android/app/google-services.json
-**/ios/Runner/GoogleService-Info.plist
+GoogleService-Info.plist
 
 # Environment variables and secrets
 .env
@@ -61,7 +58,6 @@ app.*.map.json
 
 # Personal sensitive information (add manually if needed)
 **/android/key.properties  # Contains API keys or other sensitive info for Android
-**/ios/Runner/GoogleService-Info.plist  # Firebase configuration file for iOS
 **/android/app/src/main/res/values/keys.xml  # Contains API keys or other sensitive info for Android
 
 firebase.json

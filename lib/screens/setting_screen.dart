@@ -66,49 +66,15 @@ class _SettingScreenState extends State<SettingScreen> {
             TextButton(
               child: const Text('취소'),
               onPressed: () {
-                Navigator.of(context).pop(); // 대화상자 닫기
+                Navigator.of(context).pop();
               },
             ),
             TextButton(
               child: const Text('확인'),
               onPressed: () {
-                // 로딩 다이얼로그 표시
-                showDialog(
-                  context: context,
-                  barrierDismissible: false, // 사용자가 다이얼로그 외부를 터치하여 닫을 수 없게 함
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      content: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          CircularProgressIndicator(),
-                          SizedBox(width: 20),
-                          Expanded(
-                            // Expanded 위젯 사용
-                            child: Text(
-                              "광고 로드 중 입니다..\n잠시만 기다려주세요..(🥹)",
-                              textAlign: TextAlign.center, // 텍스트 정렬
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                );
-
-                showRewardFullBanner(context, () async {
-                  Navigator.of(context).pop(); // 로딩 다이얼로그 닫기
-                  Navigator.of(context).pop(); // 초기화 다이얼로그 닫기
-
-                  try {
-                    _resetAllViewedQuestions(); // 모든 질문 초기화
-                  } catch (e) {
-                    showCustomSnackBar(
-                      context,
-                      "초기화에 실패했습니다.",
-                      isSuccess: false,
-                    );
-                  }
+                Navigator.of(context).pop();
+                showRewardFullBanner(context, () {
+                  _resetAllViewedQuestions();
                 });
               },
             ),
@@ -119,37 +85,12 @@ class _SettingScreenState extends State<SettingScreen> {
   }
 
   void _showChangeGameStaetDialog(bool value) {
-    showDialog(
-      context: context,
-      barrierDismissible: false, // 사용자가 다이얼로그 외부를 터치하여 닫을 수 없게 함
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              CircularProgressIndicator(),
-              SizedBox(width: 20),
-              Expanded(
-                // Expanded 위젯 사용
-                child: Text(
-                  "광고 로드 중 입니다..\n잠시만 기다려주세요..(🥹)",
-                  textAlign: TextAlign.center, // 텍스트 정렬
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-
-    showRewardFullBanner(context, () async {
-      Navigator.of(context).pop(); // 로딩 다이얼로그 닫기
-
+    showRewardFullBanner(context, () {
       try {
         setState(() {
           _isGameSettingOn = value;
         });
-        _saveGameSetting(value); // 게임 설정 저장
+        _saveGameSetting(value);
       } catch (e) {
         showCustomSnackBar(
           context,
@@ -311,31 +252,56 @@ class _SettingScreenState extends State<SettingScreen> {
   }
 
   void showRewardFullBanner(BuildContext context, Function callback) async {
-    await RewardedInterstitialAd.load(
-      adUnitId: REWARD_INTERSTRITIAL_ADID,
-      request: const AdRequest(),
-      rewardedInterstitialAdLoadCallback:
-          RewardedInterstitialAdLoadCallback(onAdLoaded: (ad) {
-        ad.fullScreenContentCallback = FullScreenContentCallback(
-          onAdDismissedFullScreenContent: (RewardedInterstitialAd ad) {
-            print('1');
-            ad.dispose();
-          },
-          onAdFailedToShowFullScreenContent:
-              (RewardedInterstitialAd ad, AdError error) {
-            print('2');
-            ad.dispose();
-          },
+    // 사용자에게 리워드 광고에 대한 정보를 제공하는 다이얼로그를 표시
+    bool? userConsent = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('리워드 광고'),
+          content: const Text('30초 광고를 시청하시면 기능을 사용하실 수 있습니다. 광고를 시청하시겠습니까?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('취소'),
+              onPressed: () => Navigator.of(context).pop(false),
+            ),
+            TextButton(
+              child: const Text('광고 시청'),
+              onPressed: () => Navigator.of(context).pop(true),
+            ),
+          ],
         );
-
-        ad.show(onUserEarnedReward: (ad, reward) {
-          print('3');
-          callback(); // 광고 시청 보상 후 초기화 콜백 호출
-        });
-      }, onAdFailedToLoad: (_) {
-        print(_);
-        callback(); // 광고 로드 실패 시 초기화 콜백 호출
-      }),
+      },
     );
+
+    if (userConsent == true) {
+      await RewardedInterstitialAd.load(
+        adUnitId: REWARD_INTERSTRITIAL_ADID,
+        request: const AdRequest(),
+        rewardedInterstitialAdLoadCallback:
+            RewardedInterstitialAdLoadCallback(onAdLoaded: (ad) {
+          ad.fullScreenContentCallback = FullScreenContentCallback(
+            onAdDismissedFullScreenContent: (RewardedInterstitialAd ad) {
+              ad.dispose();
+            },
+            onAdFailedToShowFullScreenContent:
+                (RewardedInterstitialAd ad, AdError error) {
+              ad.dispose();
+              showCustomSnackBar(context, '광고 표시에 실패했습니다. 다시 시도해 주세요.',
+                  isSuccess: false);
+            },
+          );
+
+          ad.show(onUserEarnedReward: (ad, reward) {
+            callback(); // 광고 시청 보상 후 초기화 콜백 호출
+          });
+        }, onAdFailedToLoad: (LoadAdError error) {
+          print('Ad failed to load: $error');
+          showCustomSnackBar(context, '광고를 불러오는 데 실패했습니다. 다시 시도해 주세요.',
+              isSuccess: false);
+        }),
+      );
+    } else {
+      showCustomSnackBar(context, '광고 시청을 취소하셨습니다.', isSuccess: false);
+    }
   }
 }
