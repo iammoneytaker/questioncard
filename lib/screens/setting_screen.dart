@@ -240,12 +240,7 @@ class _SettingScreenState extends State<SettingScreen> {
           onTap: _requestReview,
           trailing: const Icon(Icons.star),
         ),
-        const Divider(), // 구분선 추가
-        ListTile(
-          title: const Text('오픈카톡 참여'),
-          onTap: _clickOepnKakao,
-          trailing: const Icon(Icons.launch),
-        ),
+
         const Divider(), // 구분선 추가
       ],
     );
