@@ -183,41 +183,8 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
   }
 
   void endGame() {
-    showDialog(
-      context: context,
-      barrierDismissible: false, // 사용자가 다이얼로그 외부를 터치하여 닫을 수 없게 함
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              CircularProgressIndicator(),
-              SizedBox(width: 20),
-              Expanded(
-                // Expanded 위젯 사용
-                child: Text(
-                  "광고 로드 중 입니다..\n게임하는동안만 봐줘요잉(🥹)",
-                  textAlign: TextAlign.center, // 텍스트 정렬
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-
-    showRewardFullBanner(context, () async {
-      Navigator.of(context).pop(); // 로딩 다이얼로그 닫기
-
-      try {
-        setState(() {
-          gameEnded = true;
-        });
-      } catch (e) {
-        setState(() {
-          gameEnded = true;
-        });
-      }
+    setState(() {
+      gameEnded = true;
     });
   }
 
@@ -232,7 +199,7 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
           actions: <Widget>[
             TextButton(
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(appBarColor),
+                backgroundColor: WidgetStateProperty.all(appBarColor),
               ),
               child: const Text('확인', style: TextStyle(color: Colors.white)),
               onPressed: () {
@@ -345,7 +312,7 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
                             CrossAxisAlignment.center, // 가로 축 중앙 정렬
                         children: [
                           if (isPressing) ...[
-                            // 사용자가 카드를 누르고 있을 때 보여줄 내용
+                            // 사용자가 ���드를 누르고 있을 때 보여줄 내용
                             if (liars.contains(currentPlayer) &&
                                 widget.gameSettings.mode == '노멀모드') ...[
                               // 라이어일 경우 이미지를 표시
@@ -416,7 +383,7 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
                           ] else ...[
                             // 게임이 종료되었을 때 보여줄 내용
                             const Text(
-                              '완료되었습니다.\n라이어를 찾아주세요!',
+                              '게임이 종료되었습니다.\n라이어를 찾아주세요!',
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 28.0,
@@ -430,10 +397,37 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
                             ElevatedButton(
                               style: ButtonStyle(
                                 backgroundColor:
-                                    MaterialStateProperty.all(Colors.black87),
+                                    WidgetStateProperty.all(Colors.black87),
                               ),
                               onPressed: revealLiar,
                               child: const Text('라이어 확인하기'),
+                            ),
+                            const SizedBox(height: 20),
+                            ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    WidgetStateProperty.all(Colors.black87),
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop(); // 이전 화면으로 돌아가기
+                              },
+                              child: const Text('메인 메뉴로 돌아가기'),
+                            ),
+                            const SizedBox(height: 20),
+                            ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    WidgetStateProperty.all(Colors.black87),
+                              ),
+                              onPressed: () {
+                                // 새 게임 시작 로직
+                                setState(() {
+                                  initializeGame();
+                                  gameEnded = false;
+                                  currentPlayer = 0;
+                                });
+                              },
+                              child: const Text('새 게임 시작'),
                             ),
                           ],
                         ],
@@ -456,46 +450,6 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
             ),
           ),
       ]),
-    );
-  }
-
-  void showRewardFullBanner(BuildContext context, Function callback) async {
-    bool isCallbackCalled = false; // 콜백 호출 여부를 추적하는 플래그
-
-    void safeCallback() {
-      if (!isCallbackCalled) {
-        isCallbackCalled = true;
-        callback();
-      }
-    }
-
-    await RewardedInterstitialAd.load(
-      adUnitId: REWARD_INTERSTRITIAL_ADID,
-      request: const AdRequest(),
-      rewardedInterstitialAdLoadCallback:
-          RewardedInterstitialAdLoadCallback(onAdLoaded: (ad) {
-        ad.fullScreenContentCallback = FullScreenContentCallback(
-          onAdDismissedFullScreenContent: (RewardedInterstitialAd ad) {
-            print('Ad dismissed.');
-            ad.dispose();
-            safeCallback();
-          },
-          onAdFailedToShowFullScreenContent:
-              (RewardedInterstitialAd ad, AdError error) {
-            print('Ad failed to show.');
-            ad.dispose();
-            safeCallback(); // 추가적인 콜백 로직이 있다면 여기서 호출합니다.
-          },
-        );
-
-        ad.show(onUserEarnedReward: (ad, reward) {
-          print('Reward earned.');
-          safeCallback(); // 광고 시청 보상 후 초기화 콜백 호출
-        });
-      }, onAdFailedToLoad: (error) {
-        print('Ad failed to load: $error');
-        safeCallback(); // 광고 로드 실패 시 초기화 콜백 호출
-      }),
     );
   }
 }
