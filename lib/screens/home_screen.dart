@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:questioncard/screens/celebrityquiz/celebrityquiz_category_screen.dart';
 import 'package:questioncard/screens/questioncard/questioncard_screen.dart';
 import 'package:questioncard/screens/setting_screen.dart';
+import 'package:questioncard/screens/knowledge/difficulty_selection_screen.dart';
 
 import '../widgets/bottompage.dart';
 import 'liargame/liargame_screen.dart';
@@ -84,20 +85,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 ));
               },
               hashTags: ['줌인', '줌아웃', '경쟁', '순발력'],
-              isNew: true,
             ),
             _buildCategoryCard(
-              title: '노래맞추기(개발중..)',
-              imagePath: 'assets/images/musicgame.png',
-              color: Colors.green,
+              title: '상식퀴즈',
+              imagePath: 'assets/images/knowledge.png',
+              color: Colors.orange,
               onTap: () {
-                // // 게임 선택 화면으로 이동
-                // Navigator.of(context).push(MaterialPageRoute(
-                //   builder: (context) => const LiarGameScreen(),
-                // ));
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const DifficultySelectionScreen(),
+                ));
               },
-              hashTags: ['순발력', '유행', '트렌디', '꿀잼'],
-              isComplete: false,
+              hashTags: ['상식', '퀴즈', '재미', '학습'],
+              isComplete: true,
+              isNew: true,
             ),
           ],
         ),
