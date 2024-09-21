@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'dart:convert';
+import '../../data/ad_data.dart';
 
 const Color primaryColor = Color(0xffF5988D);
 const Color backgroundColor = Color(0xfffffff0);
@@ -20,6 +22,11 @@ class _GeneralKnowledgeQuizScreenState
     extends State<GeneralKnowledgeQuizScreen> {
   int currentQuestionIndex = 0;
   bool showAnswer = false;
+
+  BannerAd? _bannerAd;
+  bool _isBannerAdReady = false;
+  int _questionCount = 0;
+
   Map<String, List<Map<String, String>>> quizData = {
     '중학생': [
       {"question": "태극기의 가운데 있는 둥근 모양의 문양을 무엇이라고 하나요?", "answer": "태극"},
@@ -153,7 +160,7 @@ class _GeneralKnowledgeQuizScreenState
         "answer": "안동국제탈춤페스티벌"
       },
       {
-        "question": "한국의 대표적인 전통 민요 중 하나로, '진도아리랑'하면 가장 먼저 떠오르는 지역은?",
+        "question": "한국의 대표적인 전통 민요 중 하나로, '진도아리랑'하면 가 먼저 떠오르는 지역은?",
         "answer": "전라도"
       },
       {
@@ -189,7 +196,7 @@ class _GeneralKnowledgeQuizScreenState
       {"question": "한국의 첫 우주인은?", "answer": "이소연"},
       {"question": "조선의 첫 왕은?", "answer": "태조 이성계"},
       {"question": "일본에 의해 한국이 강제 병합된 연도는?", "answer": "1910년"},
-      {"question": "신라를 통일한 왕은?", "answer": "태종 무열왕"},
+      {"question": "신라를 통일 왕은?", "answer": "태종 무열왕"},
       {"question": "백제의 수도였던 도시는?", "answer": "공주, 부여"},
       {"question": "고구려의 시조는?", "answer": "주몽"},
       {"question": "한국 최초의 민주적 선거는?", "answer": "5.10 총선거"},
@@ -238,8 +245,8 @@ class _GeneralKnowledgeQuizScreenState
       {"question": "조선 전기 문물 제도를 정비한 법전은?", "answer": "경국대전"},
       {"question": "발해가 멸망한 후 고려로 이어진 지역은?", "answer": "고구려의 옛 땅, 요동 지방"},
       {
-        "question": "고려 시대 은병(활구)의 남용을 막기 위해 시행된 정책은?",
-        "answer": "고려 숙종 때 시행된 금병 정책"
+        "question": "고려 공민왕이 반원 자주 정책을 펼치며 시행한 정책은?",
+        "answer": "기철 제거, 쌍성총관부 공격 등"
       },
       {
         "question": "신라의 골품제는 어떤 제도였나요?",
@@ -255,7 +262,7 @@ class _GeneralKnowledgeQuizScreenState
       {"question": "고대 한국의 제정일치 사회에서 제사장의 역할을 한 사람은?", "answer": "천군"},
       {
         "question": "고조선의 8조법에 포함되지 않는 법은?",
-        "answer": "매매법 (8조법은 살인, 상해, 절도에 관한 법을 다룸)"
+        "answer": "매매법 (8조법은 인인, 상해, 절도에 관한 법을 다룸)"
       },
       {"question": "장보고가 세운 해상 무역국은?", "answer": "청해진"},
       {"question": "통일 신라시대 최초로 과거제를 시행한 왕은?", "answer": "신문왕"},
@@ -303,12 +310,9 @@ class _GeneralKnowledgeQuizScreenState
         "answer": "석굴암, 불국사, 금동 미륵보살 반가 사유상 등"
       },
       {"question": "고려 전기의 대표적인 역사서인 고려도경의 저자는?", "answer": "최승로"},
-      {"question": "신라 진흥왕 때 한강 유역을 차지하기 위해 백제와 벌인 전쟁은?", "answer": "관산성 전투"},
-      {"question": "백제를 멸망시키고 나당 연합군을 물리친 신라 장군은?", "answer": "김유신"},
-      {"question": "삼별초가 대몽 항쟁의 근거지로 삼았던 섬은?", "answer": "제주도"},
       {
-        "question": "신라 하대의 6두품 세력으로 불린 귀족은?",
-        "answer": "6头品: 원종, 애노, 순정, 술종걸종, 우태, 재종"
+        "question": "신라 진골 귀족 사이에서 독점적으로 왕위 계승권을 행사한 왕실은?",
+        "answer": "성골, 진골 → 김씨, 박씨, 석씨 등"
       },
       {
         "question": "조선 전기 왕권 강화를 위해 친족 관리들로 구성한 기구는?",
@@ -340,20 +344,6 @@ class _GeneralKnowledgeQuizScreenState
       {"question": "백제의 시조는?", "answer": "온조"},
       {"question": "근대 한국 최초의 신문은?", "answer": "한성순보"},
       {"question": "대한민국 임시정부가 수립된 장소는?", "answer": "상하이"},
-      {"question": "신라 말기 호족 세력으로 떠오른 사람은?", "answer": "견훤, 궁예, 왕건"},
-      {"question": "삼국 시대 가야 연맹의 맹주국은?", "answer": "금관가야"},
-      {"question": "한국에서 신석기 시대의 대표적인 유물은?", "answer": "빗살무늬 토기"},
-      {"question": "고려 시대 원의 공주를 왕비로 맞이한 정책은?", "answer": "몽골 공주 정책"},
-      {
-        "question": "일제 강점기 군사 조직으로 만주에서 항일 운동을 전개한 조직은?",
-        "answer": "대한독립군, 조선의용군"
-      },
-      {"question": "조선 후기 서민 문화를 대표하는 소설 장르는?", "answer": "한글 소설"},
-      {
-        "question": "고려 시대 농민 봉기 중 하나인 묘청의 서경 천도 운동이 일어난 시기는?",
-        "answer": "인종 때"
-      },
-      {"question": "대한민국 최초의 여성 대통령은?", "answer": "박근혜"},
       {"question": "신라 하대 6두품 세력의 난을 진압한 후 왕위에 오른 태조는?", "answer": "왕건"},
       {"question": "백제의 멸망 이후 백제 부흥 운동을 전개한 사람은?", "answer": "복신, 도침"},
       {"question": "고려 시대 최고의 교육 기관인 국자감의 위치는?", "answer": "개경 인근의 송악산"},
@@ -403,7 +393,7 @@ class _GeneralKnowledgeQuizScreenState
         "answer": "위화도 회군, 제 1차 왕자의 난 진압"
       },
       {"question": "통일 신라 말기에 호족 세력으로 대두한 사람은?", "answer": "견훤, 궁예, 왕건, 양길 등"},
-      {"question": "고려 전기의 대표적인 무신 세력은?", "answer": "이자겸, 김부의, 채숙 등"},
+      {"question": "고려 시대 대표적인 무신 세력은?", "answer": "이자겸, 김부의, 채숙 등"},
       {
         "question": "조선 중기의 사림 세력이 주장한 정국 운영 방식은?",
         "answer": "현량과 실시, 경연 강화, 향약 실시 등"
@@ -468,6 +458,7 @@ class _GeneralKnowledgeQuizScreenState
   void initState() {
     super.initState();
     _loadViewedQuestions();
+    _loadBannerAd();
   }
 
   void _loadViewedQuestions() async {
@@ -506,6 +497,11 @@ class _GeneralKnowledgeQuizScreenState
         _saveViewedQuestion(currentQuestionIndex);
         currentQuestionIndex++;
         showAnswer = false;
+        _questionCount++;
+
+        if (_questionCount % 5 == 0) {
+          _loadBannerAd();
+        }
       } else {
         _showResetDialog();
       }
@@ -557,6 +553,37 @@ class _GeneralKnowledgeQuizScreenState
     });
   }
 
+  void _loadBannerAd() {
+    _bannerAd?.dispose();
+    _isBannerAdReady = false; // 광고 로딩 시작 시 상태를 false로 설정
+    setState(() {});
+    _bannerAd = BannerAd(
+      adUnitId: BANNER_ADID,
+      size: AdSize.banner,
+      request: const AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (_) {
+          setState(() {
+            _isBannerAdReady = true;
+          });
+        },
+        onAdFailedToLoad: (ad, err) {
+          print('Failed to load a banner ad: ${err.message}');
+          _isBannerAdReady = false;
+          ad.dispose();
+        },
+      ),
+    );
+
+    _bannerAd?.load();
+  }
+
+  @override
+  void dispose() {
+    _bannerAd?.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -565,40 +592,53 @@ class _GeneralKnowledgeQuizScreenState
         title: Text('${widget.difficulty} 상식퀴즈'),
         backgroundColor: primaryColor,
       ),
-      body: quizData[widget.difficulty]!.isEmpty
-          ? const Center(child: CircularProgressIndicator())
-          : Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Text(
-                      quizData[widget.difficulty]![currentQuestionIndex]
-                          ["question"]!,
-                      style: const TextStyle(
-                          fontSize: 24, fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  if (showAnswer)
-                    Text(
-                      quizData[widget.difficulty]![currentQuestionIndex]
-                          ["answer"]!,
-                      style: const TextStyle(fontSize: 20, color: Colors.green),
-                    ),
-                  const SizedBox(height: 40),
-                  ElevatedButton(
-                    onPressed: showAnswer ? nextQuestion : showAnswerFunc,
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: primaryColor,
-                        foregroundColor: Colors.white),
-                    child: Text(showAnswer ? '다음 문제' : '정답 확인'),
-                  ),
-                ],
-              ),
+      body: Column(
+        children: [
+          if (_isBannerAdReady)
+            SizedBox(
+              width: _bannerAd!.size.width.toDouble(),
+              height: _bannerAd!.size.height.toDouble(),
+              child: AdWidget(ad: _bannerAd!),
             ),
+          Expanded(
+            child: quizData[widget.difficulty]!.isEmpty
+                ? const Center(child: CircularProgressIndicator())
+                : Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Text(
+                            quizData[widget.difficulty]![currentQuestionIndex]
+                                ["question"]!,
+                            style: const TextStyle(
+                                fontSize: 24, fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        if (showAnswer)
+                          Text(
+                            quizData[widget.difficulty]![currentQuestionIndex]
+                                ["answer"]!,
+                            style: const TextStyle(
+                                fontSize: 20, color: Colors.green),
+                          ),
+                        const SizedBox(height: 40),
+                        ElevatedButton(
+                          onPressed: showAnswer ? nextQuestion : showAnswerFunc,
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: primaryColor,
+                              foregroundColor: Colors.white),
+                          child: Text(showAnswer ? '다음 문제' : '정답 확인'),
+                        ),
+                      ],
+                    ),
+                  ),
+          ),
+        ],
+      ),
     );
   }
 }
