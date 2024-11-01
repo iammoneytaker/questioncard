@@ -2,10 +2,8 @@ import 'dart:convert';
 
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../data/ad_data.dart';
 import '../../data/celebrityquiz_data.dart';
 import '../../widgets/custom_snackbar.dart';
 
@@ -103,84 +101,9 @@ class _ZoomOutScreenState extends State<ZoomOutScreen> {
   }
 
   void _showAnswer() {
-    print(_currentIndex);
-    showDialog(
-      context: context,
-      barrierDismissible: false, // 사용자가 다이얼로그 외부를 터치하여 닫을 수 없게 함
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              CircularProgressIndicator(),
-              SizedBox(width: 20),
-              Expanded(
-                child: Text(
-                  "광고 로드 중 입니다..\n잠시만 기다려주세요..",
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-
-    RewardedInterstitialAd.load(
-      adUnitId: REWARD_INTERSTRITIAL_ADID,
-      request: const AdRequest(),
-      rewardedInterstitialAdLoadCallback: RewardedInterstitialAdLoadCallback(
-        onAdLoaded: (ad) {
-          ad.fullScreenContentCallback = FullScreenContentCallback(
-            onAdDismissedFullScreenContent: (RewardedInterstitialAd ad) {
-              print('Ad dismissed.');
-              ad.dispose();
-              Navigator.of(context).pop(); // 로딩 다이얼로그 닫기
-              // 보상을 받지 않았으므로 여기서는 정답을 보여주지 않음
-              showCustomSnackBar(
-                context,
-                "광고 시청을 완료하지 않아 보상을 받지 못했습니다.",
-                isSuccess: false,
-              );
-            },
-            onAdFailedToShowFullScreenContent:
-                (RewardedInterstitialAd ad, AdError error) {
-              print('Ad failed to show.');
-              ad.dispose();
-              setState(() {
-                _answer = _filteredCelebrityList[_currentIndex].keys.first;
-              });
-              Navigator.of(context).pop(); // 로딩 다이얼로그 닫기
-              showCustomSnackBar(
-                context,
-                "광고를 보여주는데 실패했습니다.",
-                isSuccess: false,
-              );
-            },
-          );
-
-          ad.show(onUserEarnedReward: (ad, reward) {
-            ad.dispose();
-            Navigator.of(context).pop(); // 로딩 다이얼로그 닫기
-            setState(() {
-              _answer = _filteredCelebrityList[_currentIndex].keys.first;
-            });
-          });
-        },
-        onAdFailedToLoad: (LoadAdError error) {
-          print('Ad failed to load: $error');
-          Navigator.of(context).pop(); // 로딩 다이얼로그 닫기
-          setState(() {
-            _answer = _filteredCelebrityList[_currentIndex].keys.first;
-          });
-          showCustomSnackBar(
-            context,
-            "광고를 로드하는데 실패했습니다.",
-            isSuccess: false,
-          );
-        },
-      ),
-    );
+    setState(() {
+      _answer = _filteredCelebrityList[_currentIndex].keys.first;
+    });
   }
 
   void _zoomOut() {
@@ -228,55 +151,25 @@ class _ZoomOutScreenState extends State<ZoomOutScreen> {
 
   // 데이터 초기화~
   Future<void> _resetViewedCelebrities() async {
-    showDialog(
-      context: context,
-      barrierDismissible: false, // 사용자가 다이얼로그 외부를 터치하여 닫을 수 없게 함
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              CircularProgressIndicator(),
-              SizedBox(width: 20),
-              Expanded(
-                // Expanded 위젯 사용
-                child: Text(
-                  "광고 로드 중 입니다..\n잠시만 기다려주세요..(🥹)",
-                  textAlign: TextAlign.center, // 텍스트 정렬
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
+    try {
+      final SharedPreferences prefs = await _prefs;
+      await prefs.setString(
+          'celebrityData', json.encode({widget.category: []}));
+      await _loadFilteredCelebrityList(); // Reload the filtered list
 
-    showRewardFullBanner(context, () async {
-      Navigator.of(context).pop(); // 로딩 다이얼로그 닫기
+      setState(() {
+        _swiperController.move(0);
+        _currentIndex = 0;
+        _scale = _initialScale;
+        _scaleHistory.clear();
+        _currentStep = 1;
+        _answer = null;
+      });
 
-      try {
-        final SharedPreferences prefs = await _prefs;
-        await prefs.setString(
-            'celebrityData', json.encode({widget.category: []}));
-        await _loadFilteredCelebrityList(); // Reload the filtered list
-
-        setState(() {
-          // Reset the swiper and other related variables
-          _swiperController.move(0);
-          _currentIndex = 0;
-          _scale = _initialScale;
-          _scaleHistory.clear();
-          _currentStep = 1;
-          _answer = null;
-        });
-      } catch (e) {
-        showCustomSnackBar(
-          context,
-          "초기화에 실패했습니다. 다시 시도해주세요.",
-          isSuccess: false,
-        );
-      }
-    });
+      showCustomSnackBar(context, "초기화가 완료되었습니다.", isSuccess: true);
+    } catch (e) {
+      showCustomSnackBar(context, "초기화에 실패했습니다. 다시 시도해주세요.", isSuccess: false);
+    }
   }
 
   @override
@@ -327,7 +220,7 @@ class _ZoomOutScreenState extends State<ZoomOutScreen> {
                         onPressed: _resetViewedCelebrities,
                         style: ButtonStyle(
                           backgroundColor:
-                              MaterialStateProperty.all(primaryColor),
+                              WidgetStateProperty.all(primaryColor),
                         ),
                         child: const Text(
                           '리셋하기',
@@ -386,7 +279,7 @@ class _ZoomOutScreenState extends State<ZoomOutScreen> {
                                 onPressed: _resetViewedCelebrities,
                                 style: ButtonStyle(
                                   backgroundColor:
-                                      MaterialStateProperty.all(primaryColor),
+                                      WidgetStateProperty.all(primaryColor),
                                 ),
                                 child: const Text(
                                   '리셋하기',
@@ -454,7 +347,7 @@ class _ZoomOutScreenState extends State<ZoomOutScreen> {
                               },
                               style: ButtonStyle(
                                 backgroundColor:
-                                    MaterialStateProperty.all(primaryColor),
+                                    WidgetStateProperty.all(primaryColor),
                               ),
                               child: const Text(
                                 '정답 확인하기',
@@ -500,46 +393,6 @@ class _ZoomOutScreenState extends State<ZoomOutScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  void showRewardFullBanner(BuildContext context, Function callback) async {
-    bool isCallbackCalled = false; // 콜백 호출 여부를 추적하는 플래그
-
-    void safeCallback() {
-      if (!isCallbackCalled) {
-        isCallbackCalled = true;
-        callback();
-      }
-    }
-
-    await RewardedInterstitialAd.load(
-      adUnitId: REWARD_INTERSTRITIAL_ADID,
-      request: const AdRequest(),
-      rewardedInterstitialAdLoadCallback:
-          RewardedInterstitialAdLoadCallback(onAdLoaded: (ad) {
-        ad.fullScreenContentCallback = FullScreenContentCallback(
-          onAdDismissedFullScreenContent: (RewardedInterstitialAd ad) {
-            print('Ad dismissed.');
-            ad.dispose();
-            safeCallback();
-          },
-          onAdFailedToShowFullScreenContent:
-              (RewardedInterstitialAd ad, AdError error) {
-            print('Ad failed to show.');
-            ad.dispose();
-            safeCallback(); // 추가적인 콜백 로직이 있다면 여기서 호출합니다.
-          },
-        );
-
-        ad.show(onUserEarnedReward: (ad, reward) {
-          print('Reward earned.');
-          safeCallback(); // 광고 시청 보상 후 초기화 콜백 호출
-        });
-      }, onAdFailedToLoad: (error) {
-        print('Ad failed to load: $error');
-        safeCallback(); // 광고 로드 실패 시 초기화 콜백 호출
-      }),
     );
   }
 }

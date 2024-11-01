@@ -4,7 +4,6 @@ import 'dart:math';
 
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../data/game_data.dart';
 import '../../data/question_data.dart';
@@ -12,7 +11,6 @@ import '../../models/question.dart';
 import '../../utils/debounce.dart';
 import '../../widgets/custom_snackbar.dart';
 import '../../widgets/roulette_widget.dart';
-import './ad_banner_widget.dart';
 
 class QuestionScreen extends StatefulWidget {
   final String categoryCode;
@@ -32,9 +30,6 @@ class _QuestionScreenState extends State<QuestionScreen> {
   List<Question> questions = [];
   late SharedPreferences prefs;
   Color primaryColor = const Color(0xff303030);
-
-  BannerAd? _bannerAd;
-  final bool _isBannerAdReady = false;
 
   bool isGameSettingOn = true;
   Timer? _viewedTimer;
@@ -151,7 +146,6 @@ class _QuestionScreenState extends State<QuestionScreen> {
   @override
   void dispose() {
     _viewedTimer?.cancel();
-    _bannerAd?.dispose();
     super.dispose();
   }
 
@@ -323,7 +317,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
                               children: [
                                 ElevatedButton(
                                   style: ButtonStyle(
-                                    backgroundColor: MaterialStateProperty.all(
+                                    backgroundColor: WidgetStateProperty.all(
                                         Colors.blueGrey),
                                   ),
                                   onPressed: _loadMoreQuestions,
@@ -388,8 +382,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
                                   const SizedBox(height: 40),
                                   ElevatedButton(
                                     style: ButtonStyle(
-                                      backgroundColor:
-                                          MaterialStateProperty.all(
+                                      backgroundColor: WidgetStateProperty.all(
                                         Colors.deepPurple,
                                       ),
                                     ),
@@ -546,12 +539,6 @@ class _QuestionScreenState extends State<QuestionScreen> {
               ),
               onPressed: _showRouletteModal,
             ),
-          ),
-          const Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: AdBannerWidget(),
           ),
         ],
       ),

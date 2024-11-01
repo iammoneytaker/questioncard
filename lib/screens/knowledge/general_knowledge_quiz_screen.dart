@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'dart:convert';
-import '../../data/ad_data.dart';
 
 const Color primaryColor = Color(0xffF5988D);
 const Color backgroundColor = Color(0xfffffff0);
@@ -23,8 +20,6 @@ class _GeneralKnowledgeQuizScreenState
   int currentQuestionIndex = 0;
   bool showAnswer = false;
 
-  BannerAd? _bannerAd;
-  bool _isBannerAdReady = false;
   int _questionCount = 0;
 
   Map<String, List<Map<String, String>>> quizData = {
@@ -458,7 +453,6 @@ class _GeneralKnowledgeQuizScreenState
   void initState() {
     super.initState();
     _loadViewedQuestions();
-    _loadBannerAd();
   }
 
   void _loadViewedQuestions() async {
@@ -498,10 +492,6 @@ class _GeneralKnowledgeQuizScreenState
         currentQuestionIndex++;
         showAnswer = false;
         _questionCount++;
-
-        if (_questionCount % 5 == 0) {
-          _loadBannerAd();
-        }
       } else {
         _showResetDialog();
       }
@@ -553,34 +543,8 @@ class _GeneralKnowledgeQuizScreenState
     });
   }
 
-  void _loadBannerAd() {
-    _bannerAd?.dispose();
-    _isBannerAdReady = false; // 광고 로딩 시작 시 상태를 false로 설정
-    setState(() {});
-    _bannerAd = BannerAd(
-      adUnitId: BANNER_ADID,
-      size: AdSize.banner,
-      request: const AdRequest(),
-      listener: BannerAdListener(
-        onAdLoaded: (_) {
-          setState(() {
-            _isBannerAdReady = true;
-          });
-        },
-        onAdFailedToLoad: (ad, err) {
-          print('Failed to load a banner ad: ${err.message}');
-          _isBannerAdReady = false;
-          ad.dispose();
-        },
-      ),
-    );
-
-    _bannerAd?.load();
-  }
-
   @override
   void dispose() {
-    _bannerAd?.dispose();
     super.dispose();
   }
 
@@ -594,12 +558,6 @@ class _GeneralKnowledgeQuizScreenState
       ),
       body: Column(
         children: [
-          if (_isBannerAdReady)
-            SizedBox(
-              width: _bannerAd!.size.width.toDouble(),
-              height: _bannerAd!.size.height.toDouble(),
-              child: AdWidget(ad: _bannerAd!),
-            ),
           Expanded(
             child: quizData[widget.difficulty]!.isEmpty
                 ? const Center(child: CircularProgressIndicator())

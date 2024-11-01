@@ -2,9 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../data/ad_data.dart';
 import '../../data/category_data.dart';
 import '../../models/category.dart';
 import '../../providers/gamesetting.dart';
@@ -28,8 +26,6 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
   final Color backgroundColor = const Color(0xfffffff0);
   final Color appBarColor = const Color(0xff375A7F); // AppBar 색상 변경
 
-  // TODO: 광고 중간에 동영상 닫기 버튼 누르면 광고 로드 중입니다 라는 팝업이 계속 뜨는 이슈가 있음.
-
   List<String> words = [];
   List<String> playedWords = [];
   int currentPlayer = 0;
@@ -44,15 +40,10 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
   bool isPressing = false; // 사용자가 카드를 누르고 있는지 여부
   Timer? _pressTimer; // 사용자가 누르고 있는 시간을 추적하기 위한 타이머
 
-  // AD
-  bool _isBannerAdReady = false;
-  BannerAd? _bannerAd;
-
   @override
   void initState() {
     super.initState();
     initializeGame();
-    _loadBannerAd();
   }
 
   Future<void> initializeGame() async {
@@ -244,36 +235,10 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
     });
   }
 
-  _loadBannerAd() {
-    _bannerAd = BannerAd(
-      adUnitId: BANNER_ADID,
-      size: AdSize.banner,
-      request: const AdRequest(),
-      listener: BannerAdListener(onAdLoaded: (Ad ad) {
-        print('$ad loaded.');
-        setState(() {
-          _isBannerAdReady = true;
-        });
-      }, onAdFailedToLoad: (Ad ad, LoadAdError error) {
-        print('$ad failed to load: $error');
-        ad.dispose();
-        setState(() {
-          _isBannerAdReady = false;
-        });
-      }, onAdClosed: (Ad ad) {
-        setState(() {
-          _isBannerAdReady = false;
-        });
-      }),
-    );
-    _bannerAd!.load();
-  }
-
   @override
   void dispose() {
     _timer?.cancel();
     _pressTimer?.cancel();
-    _bannerAd?.dispose();
     super.dispose();
   }
 
@@ -284,6 +249,8 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
         elevation: 0,
         backgroundColor: Colors.black87,
         title: Text(widget.categoryName),
+        iconTheme:
+            const IconThemeData(color: Colors.white), // 뒤로가기 버튼 색상을 하얀색으로 변경
       ),
       body: Stack(children: [
         Container(
@@ -396,28 +363,39 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
                             const SizedBox(height: 40),
                             ElevatedButton(
                               style: ButtonStyle(
-                                backgroundColor:
-                                    WidgetStateProperty.all(Colors.black87),
+                                backgroundColor: WidgetStateProperty.all(
+                                    const Color(0xffF5988D)),
                               ),
                               onPressed: revealLiar,
-                              child: const Text('라이어 확인하기'),
+                              child: const Text(
+                                '라이어 확인하기',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
                             ),
                             const SizedBox(height: 20),
                             ElevatedButton(
                               style: ButtonStyle(
-                                backgroundColor:
-                                    WidgetStateProperty.all(Colors.black87),
+                                backgroundColor: WidgetStateProperty.all(
+                                    const Color(0xffF5988D)),
                               ),
                               onPressed: () {
                                 Navigator.of(context).pop(); // 이전 화면으로 돌아가기
                               },
-                              child: const Text('메인 메뉴로 돌아가기'),
+                              child: const Text(
+                                '메인 메뉴로 돌아가기',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
                             ),
                             const SizedBox(height: 20),
                             ElevatedButton(
                               style: ButtonStyle(
-                                backgroundColor:
-                                    WidgetStateProperty.all(Colors.black87),
+                                backgroundColor: WidgetStateProperty.all(
+                                  const Color(0xffF5988D),
+                                ),
                               ),
                               onPressed: () {
                                 // 새 게임 시작 로직
@@ -427,7 +405,12 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
                                   currentPlayer = 0;
                                 });
                               },
-                              child: const Text('새 게임 시작'),
+                              child: const Text(
+                                '새 게임 시작',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
                             ),
                           ],
                         ],
@@ -439,16 +422,6 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
             ),
           ),
         ),
-        if (_isBannerAdReady)
-          Positioned(
-            bottom: 0,
-            left: MediaQuery.of(context).size.width * 0.1,
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width * 0.8,
-              height: _bannerAd!.size.height.toDouble(),
-              child: AdWidget(ad: _bannerAd!),
-            ),
-          ),
       ]),
     );
   }

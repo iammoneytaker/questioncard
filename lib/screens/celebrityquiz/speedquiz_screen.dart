@@ -2,11 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../data/ad_data.dart';
 import '../../data/celebrityquiz_data.dart';
+import '../../widgets/custom_snackbar.dart';
 
 class SpeedQuizScreen extends StatefulWidget {
   final String category;
@@ -145,49 +144,7 @@ class _SpeedQuizScreenState extends State<SpeedQuizScreen> {
     super.dispose();
   }
 
-// 이 메서드는 광고가 성공적으로 보여졌을 때 호출됩니다.
-  void showRewardFullBanner(BuildContext context, Function callback) async {
-    bool isCallbackCalled = false;
-
-    void safeCallback() {
-      if (!isCallbackCalled) {
-        isCallbackCalled = true;
-        callback();
-      }
-    }
-
-    await RewardedInterstitialAd.load(
-      adUnitId: REWARD_INTERSTRITIAL_ADID,
-      request: const AdRequest(),
-      rewardedInterstitialAdLoadCallback:
-          RewardedInterstitialAdLoadCallback(onAdLoaded: (ad) {
-        ad.fullScreenContentCallback = FullScreenContentCallback(
-          onAdDismissedFullScreenContent: (RewardedInterstitialAd ad) {
-            print('Ad dismissed.');
-            ad.dispose();
-            safeCallback();
-          },
-          onAdFailedToShowFullScreenContent:
-              (RewardedInterstitialAd ad, AdError error) {
-            print('Ad failed to show.');
-            ad.dispose();
-            safeCallback();
-          },
-        );
-
-        ad.show(onUserEarnedReward: (ad, reward) {
-          print('Reward earned.');
-          _initializeQuiz(); // 광고 보상 후 퀴즈 초기화
-          safeCallback();
-        });
-      }, onAdFailedToLoad: (error) {
-        print('Ad failed to load: $error');
-        safeCallback();
-      }),
-    );
-  }
-
-// 이 메서드는 모든 이미지를 본 후에 호출되며, 퀴즈 상태를 초기화합니다.
+  // 이 메서드는 모든 이미지를 본 후에 호출되며, 퀴즈 상태를 초기화합니다.
   void _initializeQuiz() async {
     final SharedPreferences prefs = await _prefs;
     await prefs.setString('celebrityData', json.encode({widget.category: []}));
@@ -206,108 +163,25 @@ class _SpeedQuizScreenState extends State<SpeedQuizScreen> {
     await _loadFilteredCelebrityList(); // 새 데이터 로드
   }
 
-// 이 메서드는 리셋 버튼을 클릭했을 때 호출됩니다.
+  // 이 메서드는 리셋 버튼을 클릭했을 때 호출됩니다.
   Future<void> _resetViewedCelebrities() async {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              CircularProgressIndicator(),
-              SizedBox(width: 20),
-              Expanded(
-                child: Text(
-                  "광고 로드 중입니다..\n잠시만 기다려주세요..",
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-
-    // 광고를 보여주고, 사용자가 광고를 보면 퀴즈를 초기화합니다.
-    showRewardFullBanner(context, () {
-      Navigator.of(context).pop(); // 로딩 다이얼로그 닫기
+    try {
+      final SharedPreferences prefs = await _prefs;
+      await prefs.setString(
+          'celebrityData', json.encode({widget.category: []}));
       _initializeQuiz(); // 퀴즈 상태 초기화
-    });
+      showCustomSnackBar(context, "초기화가 완료되었습니다.", isSuccess: true);
+    } catch (e) {
+      showCustomSnackBar(context, "초기화에 실패했습니다. 다시 시도해주세요.", isSuccess: false);
+    }
   }
 
   // '정답 확인하기' 버튼 로직
   void _showAnswer() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              CircularProgressIndicator(),
-              SizedBox(width: 20),
-              Expanded(
-                child: Text(
-                  "광고 로드 중입니다..\n잠시만 기다려주세요..",
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-    void showRewardFullBanner2(BuildContext context, Function callback) async {
-      bool isCallbackCalled = false; // 콜백 호출 여부를 추적하는 플래그
-
-      void safeCallback() {
-        if (!isCallbackCalled) {
-          isCallbackCalled = true;
-          callback();
-        }
-      }
-
-      await RewardedInterstitialAd.load(
-        adUnitId: REWARD_INTERSTRITIAL_ADID,
-        request: const AdRequest(),
-        rewardedInterstitialAdLoadCallback:
-            RewardedInterstitialAdLoadCallback(onAdLoaded: (ad) {
-          ad.fullScreenContentCallback = FullScreenContentCallback(
-            onAdDismissedFullScreenContent: (RewardedInterstitialAd ad) {
-              print('Ad dismissed.');
-              ad.dispose();
-              safeCallback();
-            },
-            onAdFailedToShowFullScreenContent:
-                (RewardedInterstitialAd ad, AdError error) {
-              print('Ad failed to show.');
-              ad.dispose();
-              safeCallback(); // 추가적인 콜백 로직이 있다면 여기서 호출합니다.
-            },
-          );
-
-          ad.show(onUserEarnedReward: (ad, reward) {
-            print('Reward earned.');
-            safeCallback(); // 광고 시청 보상 후 초기화 콜백 호출
-          });
-        }, onAdFailedToLoad: (error) {
-          print('Ad failed to load: $error');
-          safeCallback(); // 광고 로드 실패 시 초기화 콜백 호출
-        }),
-      );
-    }
-
-    // 광고를 보여주고, 사용자가 광고를 보면 퀴즈를 초기화합니다.
-    showRewardFullBanner2(context, () {
-      Navigator.of(context).pop(); // 로딩 다이얼로그 닫기
-      setState(() {
-        _showImage = true; // 이미지를 다시 보여줌
-        _showAnswerCheck = false; // '정답 확인하기' 버튼 숨김
-        _bShowAnswer = true;
-      });
+    setState(() {
+      _showImage = true;
+      _showAnswerCheck = false;
+      _bShowAnswer = true;
     });
   }
 
@@ -382,7 +256,7 @@ class _SpeedQuizScreenState extends State<SpeedQuizScreen> {
                               onPressed: _resetViewedCelebrities,
                               style: ButtonStyle(
                                 backgroundColor:
-                                    MaterialStateProperty.all(primaryColor),
+                                    WidgetStateProperty.all(primaryColor),
                               ),
                               child: const Text(
                                 '리셋하기',
@@ -459,7 +333,7 @@ class _SpeedQuizScreenState extends State<SpeedQuizScreen> {
                                         onPressed: _nextQuestion,
                                         style: ButtonStyle(
                                           backgroundColor:
-                                              MaterialStateProperty.all(
+                                              WidgetStateProperty.all(
                                                   primaryColor),
                                         ),
                                         child: const Text('다음 문제'),
@@ -510,7 +384,7 @@ class _SpeedQuizScreenState extends State<SpeedQuizScreen> {
                               onPressed: _resetViewedCelebrities,
                               style: ButtonStyle(
                                 backgroundColor:
-                                    MaterialStateProperty.all(primaryColor),
+                                    WidgetStateProperty.all(primaryColor),
                               ),
                               child: const Text(
                                 '리셋하기',
@@ -545,7 +419,7 @@ class _SpeedQuizScreenState extends State<SpeedQuizScreen> {
                               onPressed: _showAnswer,
                               style: ButtonStyle(
                                 backgroundColor:
-                                    MaterialStateProperty.all(primaryColor),
+                                    WidgetStateProperty.all(primaryColor),
                               ),
                               child: const Text('정답 확인하기'),
                             ),
@@ -554,7 +428,7 @@ class _SpeedQuizScreenState extends State<SpeedQuizScreen> {
                               onPressed: _nextQuestion,
                               style: ButtonStyle(
                                 backgroundColor:
-                                    MaterialStateProperty.all(primaryColor),
+                                    WidgetStateProperty.all(primaryColor),
                               ),
                               child: const Text('다음 문제'),
                             ),

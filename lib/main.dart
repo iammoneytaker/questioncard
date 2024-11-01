@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:questioncard/providers/gamesetting.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,8 +15,6 @@ void main() async {
   ]);
   SharedPreferences prefs = await SharedPreferences.getInstance();
   bool introShown = prefs.getBool('introShown') ?? false;
-
-  MobileAds.instance.initialize();
 
   runApp(
     ChangeNotifierProvider(

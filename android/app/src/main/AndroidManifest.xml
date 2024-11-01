@@ -1,9 +1,20 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.moneytaker.questioncard">
+    <uses-permission android:name="android.permission.INTERNET"/>
     <queries>
             <intent>
                 <action android:name="android.intent.action.VIEW" />
                 <data android:scheme="mailto" />
+            </intent>
+            <intent>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" />
+            </intent>
+            <intent>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="http" />
             </intent>
     </queries>
    <application
@@ -36,8 +47,5 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-        <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-6451550267398782~5592560883"/>
     </application>
 </manifest>
